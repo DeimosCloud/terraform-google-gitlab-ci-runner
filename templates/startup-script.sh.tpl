@@ -55,7 +55,7 @@ else
       --google-scopes https://www.googleapis.com/auth/cloud-platform \
       --google-disk-type pd-ssd \
       --google-tags ${runners_tags} \
-      ${prefix}-dummy-machine
+      ${prefix}-gitlab-runner-dummy-machine
   docker-machine rm -y ${prefix}-gitlab-runner-dummy-machine
   unset HOME
   unset USER
