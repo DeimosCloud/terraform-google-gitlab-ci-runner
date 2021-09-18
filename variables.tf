@@ -31,16 +31,16 @@ variable "subnetwork" {
   default     = ""
 }
 
-variable "machine_type" {
+variable "runners_machine_type" {
   description = "Instance type used for the GitLab runner."
   type        = string
-  default     = "f1-micro"
+  default     = "n2-standard-2"
 }
 
 variable "runners_preemptible" {
   description = "If true, runner compute instances will be premptible"
   type        = bool
-  default     = false
+  default     = true
 }
 
 variable "runners_disk_size" {
@@ -68,31 +68,37 @@ variable "docker_machine_download_url" {
 }
 
 variable "docker_machine_machine_type" {
-  description = "The Machine Type for the instances created by docker-machine."
+  description = "The Machine Type for the docker-machine instances."
   type        = string
-  default     = "n2-standard-2"
+  default     = "f1-micro"
+}
+
+variable "docker_machine_preemptible" {
+  description = "If true, docker-machine instances will be premptible"
+  type        = bool
+  default     = false
 }
 
 variable "docker_machine_disk_type" {
-  description = "The disk Type for the instances created by docker-machine."
+  description = "The disk Type for docker-machine instances."
   type        = string
   default     = "pd-standard"
 }
 
 variable "docker_machine_disk_size" {
-  description = "The disk size of the instances created by docker-machine."
+  description = "The disk size for the docker-machine instances."
   type        = number
   default     = 20
 }
 
 variable "docker_machine_tags" {
-  description = "Additional Network tags to be attached to the instances created by docker-machine."
+  description = "Additional Network tags to be attached to the docker-machine instances."
   type        = list(string)
   default     = []
 }
 
 variable "docker_machine_use_internal_ip" {
-  description = "If true, all instances created by docker-machine will have only internal IPs."
+  description = "If true, docker-machine instances will have only internal IPs."
   default     = true
   type        = bool
 }
@@ -103,13 +109,13 @@ variable "runners_name" {
 }
 
 variable "runners_max_replicas" {
-  description = "The maximum number of runners to spin up. Note that this is not the agent used in the docker+machine setup. Runners can use docker or docker+machine setup"
+  description = "The maximum number of runners to spin up.For docker+machine, this is the max number of instances that will run docker-machine. For docker, this is the maximum number of runner instances. "
   type        = number
   default     = 1
 }
 
 variable "runners_min_replicas" {
-  description = "The minimum number of runners to spin up. Note that this is not the agent used in the docker+machine setup. Runners can use docker or docker+machine setup"
+  description = "The minimum number of runners to spin up. For docker+machine, this is the min number of instances that will run docker-machine. For docker, this is the minimum number of runner instances"
   type        = number
   default     = 1
 }
@@ -139,25 +145,25 @@ variable "runners_limit" {
 }
 
 variable "runners_concurrent" {
-  description = "Concurrent value for the runners, will be used in the runner config.toml."
+  description = "Concurrent value for the runners, will be used in the runner config.toml. Limits how many jobs globally can be run concurrently when running docker-machine."
   type        = number
   default     = 10
 }
 
 variable "runners_idle_time" {
-  description = "Idle time of the runners, will be used in the runner config.toml."
+  description = "(docker-machine) Idle time of the runners, will be used in the runner config.toml."
   type        = number
   default     = 600
 }
 
 variable "runners_idle_count" {
-  description = "Idle count of the runners, will be used in the runner config.toml."
+  description = "(docker-machine) Idle count of the runners, will be used in the runner config.toml."
   type        = number
   default     = 0
 }
 
 variable "runners_max_builds" {
-  description = "Max builds for each runner after which it will be removed, will be used in the runner config.toml. By default set to 0, no maxBuilds will be set in the configuration."
+  description = "(docker-machine) Max builds for each runner after which it will be removed, will be used in the runner config.toml. By default set to 0, no maxBuilds will be set in the configuration."
   type        = number
   default     = 0
 }
@@ -165,7 +171,7 @@ variable "runners_max_builds" {
 variable "runners_image" {
   description = "Image to run builds, will be used in the runner config.toml"
   type        = string
-  default     = "docker:18.03.1-ce"
+  default     = "docker:19.03"
 }
 
 variable "runners_privileged" {
@@ -210,44 +216,14 @@ variable "runners_pull_policy" {
   default     = "always"
 }
 
-variable "runners_monitoring" {
-  description = "Enable detailed cloudwatch monitoring for spot instances."
-  type        = bool
-  default     = false
-}
-
-variable "runners_ebs_optimized" {
-  description = "Enable runners to be EBS-optimized."
+variable "runners_enable_monitoring" {
+  description = "Installs Stackdriver monitoring Agent on runner Instances to collect metrics."
   type        = bool
   default     = true
 }
 
-variable "runners_off_peak_timezone" {
-  description = "Deprecated, please use `runners_machine_autoscaling`. Off peak idle time zone of the runners, will be used in the runner config.toml."
-  type        = string
-  default     = null
-}
-
-variable "runners_off_peak_idle_count" {
-  description = "Deprecated, please use `runners_machine_autoscaling`. Off peak idle count of the runners, will be used in the runner config.toml."
-  type        = number
-  default     = -1
-}
-
-variable "runners_off_peak_idle_time" {
-  description = "Deprecated, please use `runners_machine_autoscaling`. Off peak idle time of the runners, will be used in the runner config.toml."
-  type        = number
-  default     = -1
-}
-
-variable "runners_off_peak_periods" {
-  description = "Deprecated, please use `runners_machine_autoscaling`. Off peak periods of the runners, will be used in the runner config.toml."
-  type        = string
-  default     = null
-}
-
 variable "runners_machine_autoscaling" {
-  description = "Set autoscaling parameters based on periods, see https://docs.gitlab.com/runner/configuration/advanced-configuration.html#the-runnersmachine-section"
+  description = "(docker-machine) Set autoscaling parameters based on periods, see https://docs.gitlab.com/runner/configuration/advanced-configuration.html#the-runnersmachine-section"
   type = list(object({
     periods    = list(string)
     idle_count = number
@@ -311,16 +287,10 @@ variable "startup_script_post_install" {
   default     = ""
 }
 
-variable "runners_use_private_address" {
-  description = "Restrict runners to the use of a private IP address"
+variable "runners_use_internal_ip" {
+  description = "Restrict runners to the use of a Internal IP address. NOTE: NAT Router must be deployed in your network so that Runners can access resources on the internet"
   type        = bool
   default     = true
-}
-
-variable "cache_bucket_set_random_suffix" {
-  description = "Append the cache bucket name with a random string suffix"
-  type        = bool
-  default     = false
 }
 
 variable "cache_location" {
@@ -346,9 +316,9 @@ variable "cache_expiration_days" {
 }
 
 variable "cache_shared" {
-  description = "Enables cache sharing between runners, false by default."
+  description = "Enables cache sharing between runners."
   type        = bool
-  default     = false
+  default     = true
 }
 
 variable "gitlab_runner_version" {
@@ -357,22 +327,16 @@ variable "gitlab_runner_version" {
   default     = ""
 }
 
-variable "enable_ping" {
-  description = "Allow ICMP Ping to the compute instances."
+variable "runners_allow_ssh_access" {
+  description = "Enables SSH Access to the runner instances."
   type        = bool
-  default     = false
+  default     = true
 }
 
-variable "enable_gitlab_runner_ssh_access" {
-  description = "Enables SSH Access to the gitlab runner instance."
-  type        = bool
-  default     = false
-}
-
-variable "gitlab_runner_ssh_cidr_blocks" {
+variable "runners_ssh_allowed_cidr_blocks" {
   description = "List of CIDR blocks to allow SSH Access to the gitlab runner instance."
   type        = list(string)
-  default     = []
+  default     = ["0.0.0.0/0"]
 }
 
 variable "labels" {
@@ -426,8 +390,7 @@ variable "runners_services_volumes_tmpfs" {
   default = []
 }
 
-variable "allow_ssh" {
-  description = "If true, ssh Port is allowed on instances in the firewall"
-  type        = bool
-  default     = true
+variable "runners_target_autoscale_cpu_utilization" {
+  description = "The target CPU utilization that the autoscaler should maintain. If runner CPU utilization gets above this, a new runner is created until runners_max_replicas is reached"
+  default     = 0.9
 }

@@ -9,14 +9,56 @@ cat > /etc/gitlab-runner/service-account.json <<- EOF
 ${runners_service_account_json}
 EOF
 
+# Setup Monitoring for instances
+if [[ `echo ${runners_enable_monitoring}` == "true" ]]; then
+  curl -sSO https://dl.google.com/cloudagents/add-monitoring-agent-repo.sh 
+  bash add-monitoring-agent-repo.sh --also-install 
+  service stackdriver-agent start
+fi
+
 ${pre_install}
+
+curl --fail --retry 6 -L https://packages.gitlab.com/install/repositories/runner/gitlab-runner/script.rpm.sh | bash
+yum install ${gitlab_runner_version} -y
 
 if [[ `echo ${runners_executor}` == "docker" ]]
 then
   echo 'installing docker'
-    yum install docker -y
+    curl --fail --retry 6 -L https://get.docker.com/ |bash
     usermod -a -G docker gitlab-runner
     service docker start
+else
+  if [[ `echo ${docker_machine_download_url}` == "" ]]
+  then
+    # Download Docker machine from Gitlab Fork with fixes and maintenances
+    curl --fail --retry 6 -L https://gitlab-docker-machine-downloads.s3.amazonaws.com/main/docker-machine-`uname -s`-`uname -m` -o /tmp/docker-machine
+  else
+    curl --fail --retry 6 -L ${docker_machine_download_url} -o /tmp/docker-machine
+  fi
+
+  chmod +x /tmp/docker-machine && \
+    mv /tmp/docker-machine /usr/local/bin/docker-machine && \
+    ln -s /usr/local/bin/docker-machine /usr/bin/docker-machine
+  docker-machine --version
+
+  # Create a dummy machine so that the cert is generated properly
+  # See: https://gitlab.com/gitlab-org/gitlab-runner/issues/3676
+  # See: https://github.com/docker/machine/issues/3845#issuecomment-280389178
+  export USER=root
+  export HOME=/root
+  echo "Verifying docker-machine and generating SSH keys ahead of time."
+  docker-machine create --driver google \
+      --google-project ${gcp_project} \
+      --google-machine-type f1-micro \
+      --google-zone ${gcp_zone} \
+      --google-service-account ${runners_service_account} \
+      --google-scopes https://www.googleapis.com/auth/cloud-platform \
+      --google-disk-type pd-ssd \
+      --google-tags ${runners_tags} \
+      ${prefix}-dummy-machine
+  docker-machine rm -y ${prefix}-gitlab-runner-dummy-machine
+  unset HOME
+  unset USER
 fi
 
 if [[ "${runners_install_docker_credential_gcr}" == "true" ]]
@@ -26,41 +68,6 @@ then
     tar -xzf - docker-credential-gcr --to-stdout \
     > /usr/local/bin/docker-credential-gcr && chmod +x /usr/local/bin/docker-credential-gcr
 fi
-
-curl --fail --retry 6 -L https://packages.gitlab.com/install/repositories/runner/gitlab-runner/script.rpm.sh | bash
-yum install ${gitlab_runner_version} -y
-
-if [[ `echo ${docker_machine_download_url}` == "" ]]
-then
-  # Download Docker machine from Gitlab Fork with fixes and maintenances
-  curl --fail --retry 6 -L https://gitlab-docker-machine-downloads.s3.amazonaws.com/main/docker-machine-`uname -s`-`uname -m` -o /tmp/docker-machine
-else
-  curl --fail --retry 6 -L ${docker_machine_download_url} -o /tmp/docker-machine
-fi
-
-chmod +x /tmp/docker-machine && \
-  mv /tmp/docker-machine /usr/local/bin/docker-machine && \
-  ln -s /usr/local/bin/docker-machine /usr/bin/docker-machine
-docker-machine --version
-
-# Create a dummy machine so that the cert is generated properly
-# See: https://gitlab.com/gitlab-org/gitlab-runner/issues/3676
-# See: https://github.com/docker/machine/issues/3845#issuecomment-280389178
-export USER=root
-export HOME=/root
-echo "Verifying docker-machine and generating SSH keys ahead of time."
-docker-machine create --driver google \
-    --google-project ${gcp_project} \
-    --google-machine-type f1-micro \
-    --google-zone ${gcp_zone} \
-    --google-service-account ${runners_service_account} \
-    --google-scopes https://www.googleapis.com/auth/cloud-platform \
-    --google-disk-type pd-ssd \
-    --google-tags ${runners_tags} \
-    ${prefix}-dummy-machine
-docker-machine rm -y ${prefix}-dummy-machine
-unset HOME
-unset USER
 
 # Install jq if not exists
 if ! [ -x "$(command -v jq)" ]; then

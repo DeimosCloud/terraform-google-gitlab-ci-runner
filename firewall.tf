@@ -1,5 +1,5 @@
 resource "google_compute_firewall" "ssh" {
-  count       = var.allow_ssh ? 1 : 0
+  count       = var.runners_allow_ssh_access ? 1 : 0
   name        = "${var.prefix}-gitlab-allow-ssh"
   description = "Allow SSH to Runner instances"
   network     = data.google_compute_network.this.name
@@ -9,7 +9,8 @@ resource "google_compute_firewall" "ssh" {
     ports    = ["22"]
   }
 
-  target_tags = ["gitlab"]
+  source_ranges = var.runners_ssh_allowed_cidr_blocks
+  target_tags   = ["gitlab"]
 }
 
 resource "google_compute_firewall" "docker_machine" {

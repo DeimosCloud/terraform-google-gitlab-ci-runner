@@ -5,28 +5,21 @@ resource "google_service_account" "runner" {
   display_name = "GitLab CI Runner"
 }
 
-resource "google_project_iam_member" "instanceadmin_runner" {
-  project = var.project
-  role    = "roles/compute.instanceAdmin.v1"
-  member  = "serviceAccount:${google_service_account.runner.email}"
+locals {
+  runner_iam_roles = [
+    "roles/compute.instanceAdmin.v1",
+    "roles/compute.networkAdmin",
+    "roles/logging.logWriter",
+    "roles/compute.securityAdmin",
+    "roles/monitoring.metricWriter"
+  ]
 }
 
-resource "google_project_iam_member" "networkadmin_runner" {
-  project = var.project
-  role    = "roles/compute.networkAdmin"
-  member  = "serviceAccount:${google_service_account.runner.email}"
-}
-
-resource "google_project_iam_member" "securityadmin_runner" {
-  project = var.project
-  role    = "roles/compute.securityAdmin"
-  member  = "serviceAccount:${google_service_account.runner.email}"
-}
-
-resource "google_project_iam_member" "logwriter_runner" {
-  project = var.project
-  role    = "roles/logging.logWriter"
-  member  = "serviceAccount:${google_service_account.runner.email}"
+resource "google_project_iam_member" "this" {
+  for_each = toset(local.runner_iam_roles)
+  project  = var.project
+  role     = each.value
+  member   = "serviceAccount:${google_service_account.runner.email}"
 }
 
 # Service account for Gitlab CI build instances that are dynamically spawned by the runner.
@@ -51,15 +44,15 @@ resource "google_compute_instance_template" "this" {
   name_prefix = "${var.prefix}-gitlab-runner-"
   description = "This template is used to create Gitlab Runner instances."
 
-  tags = distinct(concat(["gitlab"], var.runners_tags))
+  tags = distinct(concat(["gitlab"], var.runners_executor == "docker+machine" ? var.docker_machine_tags : var.runners_tags))
 
   labels = local.runners_labels
 
   instance_description = "Gitlab Runner Instance"
-  machine_type         = var.machine_type
+  machine_type         = var.runners_executor == "docker+machine" ? var.docker_machine_machine_type : var.runners_machine_type
 
   scheduling {
-    preemptible = var.runners_preemptible
+    preemptible = var.runners_executor == "docker+machine" ? var.docker_machine_preemptible : var.runners_preemptible
   }
 
   // Create a new boot disk from an image
@@ -67,8 +60,8 @@ resource "google_compute_instance_template" "this" {
     source_image = "centos-cloud/centos-7"
     auto_delete  = true
     boot         = true
-    disk_size_gb = var.runners_disk_size
-    disk_type    = var.runners_disk_type
+    disk_size_gb = var.runners_executor == "docker+machine" ? var.docker_machine_disk_size : var.runners_disk_size
+    disk_type    = var.runners_executor == "docker+machine" ? var.docker_machine_disk_type : var.runners_disk_type
     labels       = local.runners_labels
   }
 
@@ -76,7 +69,16 @@ resource "google_compute_instance_template" "this" {
   network_interface {
     network    = var.network
     subnetwork = var.subnetwork
-    access_config {}
+
+    dynamic "access_config" {
+      for_each = alltrue([var.runners_executor == "docker", !var.runners_use_internal_ip]) ? ["internal-ip"] : []
+      content {}
+    }
+
+    dynamic "access_config" {
+      for_each = alltrue([var.runners_executor == "docker+machine", !var.docker_machine_use_internal_ip]) ? ["internal-ip"] : []
+      content {}
+    }
   }
 
   metadata = merge(var.runners_metadata, {
@@ -92,7 +94,6 @@ resource "google_compute_instance_template" "this" {
   lifecycle {
     create_before_destroy = true
   }
-
 }
 
 
@@ -125,8 +126,7 @@ resource "google_compute_region_autoscaler" "this" {
     min_replicas = var.runners_min_replicas
 
     cpu_utilization {
-      target            = 0.8
-      predictive_method = "OPTIMIZE_AVAILABILITY"
+      target = var.runners_target_autoscale_cpu_utilization
     }
   }
 

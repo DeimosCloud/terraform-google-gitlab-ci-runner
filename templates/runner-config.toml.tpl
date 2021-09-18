@@ -1,5 +1,5 @@
 concurrent = ${runners_concurrent}
-check_interval = 5
+check_interval = 0
 
 [[runners]]
   name = "${runners_name}"
@@ -18,7 +18,7 @@ check_interval = 5
     image = "${runners_image}"
     privileged = ${runners_privileged}
     disable_cache = ${runners_disable_cache}
-    volumes = ["/var/run/docker.sock:/var/run/docker.sock", "/cache"${runners_additional_volumes}]
+    volumes = ["/cache" ${runners_additional_volumes}]
     shm_size = ${runners_shm_size}
     pull_policy = "${runners_pull_policy}"
     runtime = "${runners_docker_runtime}"
