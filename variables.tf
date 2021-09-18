@@ -34,7 +34,7 @@ variable "subnetwork" {
 variable "runners_machine_type" {
   description = "Instance type used for the GitLab runner."
   type        = string
-  default     = "n2-standard-2"
+  default     = "n1-standard-1"
 }
 
 variable "runners_preemptible" {
@@ -148,6 +148,12 @@ variable "runners_concurrent" {
   description = "Concurrent value for the runners, will be used in the runner config.toml. Limits how many jobs globally can be run concurrently when running docker-machine."
   type        = number
   default     = 10
+}
+
+variable "runners_max_growth_rate" {
+  description = "(docker-machine) The maximum number of machines that can be added to the runner in parallel. Default is 0 (no limit)."
+  type        = number
+  default     = 0
 }
 
 variable "runners_idle_time" {

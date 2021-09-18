@@ -145,8 +145,9 @@ Full contributing guidelines are covered [here](CONTRIBUTING.md).
 | runners\_install\_docker\_credential\_gcr | Install docker\_credential\_gcr inside `startup_script_pre_install` script | `bool` | `false` | no |
 | runners\_limit | Limit for the runners, will be used in the runner config.toml. | `number` | `0` | no |
 | runners\_machine\_autoscaling | (docker-machine) Set autoscaling parameters based on periods, see https://docs.gitlab.com/runner/configuration/advanced-configuration.html#the-runnersmachine-section | <pre>list(object({<br>    periods    = list(string)<br>    idle_count = number<br>    idle_time  = number<br>    timezone   = string<br>  }))</pre> | `[]` | no |
-| runners\_machine\_type | Instance type used for the GitLab runner. | `string` | `"n2-standard-2"` | no |
+| runners\_machine\_type | Instance type used for the GitLab runner. | `string` | `"n1-standard-1"` | no |
 | runners\_max\_builds | (docker-machine) Max builds for each runner after which it will be removed, will be used in the runner config.toml. By default set to 0, no maxBuilds will be set in the configuration. | `number` | `0` | no |
+| runners\_max\_growth\_rate | (docker-machine) The maximum number of machines that can be added to the runner in parallel. Default is 0 (no limit). | `number` | `0` | no |
 | runners\_max\_replicas | The maximum number of runners to spin up.For docker+machine, this is the max number of instances that will run docker-machine. For docker, this is the maximum number of runner instances. | `number` | `1` | no |
 | runners\_metadata | (Optional) Metadata key/value pairs to make available from within instances created from this template. | `map` | `{}` | no |
 | runners\_min\_replicas | The minimum number of runners to spin up. For docker+machine, this is the min number of instances that will run docker-machine. For docker, this is the minimum number of runner instances | `number` | `1` | no |

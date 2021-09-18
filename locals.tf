@@ -92,6 +92,7 @@ locals {
       runners_pull_policy            = var.runners_pull_policy
       runners_idle_count             = var.runners_idle_count
       runners_idle_time              = var.runners_idle_time
+      runners_max_growth_rate        = var.runners_max_growth_rate
       runners_max_builds             = local.runners_max_builds_string
       runners_machine_autoscaling    = local.runners_machine_autoscaling
       runners_environment_vars       = jsonencode(var.runners_environment_vars)

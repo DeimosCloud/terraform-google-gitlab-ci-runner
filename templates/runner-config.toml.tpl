@@ -36,6 +36,7 @@ check_interval = 0
   [runners.machine]
     IdleCount = ${runners_idle_count}
     IdleTime = ${runners_idle_time}
+    MaxGrowthRate = ${runners_max_growth_rate}
     ${runners_max_builds}
     MachineDriver = "google"
     MachineName = "runner-%s"
