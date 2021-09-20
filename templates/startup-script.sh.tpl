@@ -11,8 +11,8 @@ EOF
 
 # Setup Monitoring for instances
 if [[ `echo ${runners_enable_monitoring}` == "true" ]]; then
-  curl -sSO https://dl.google.com/cloudagents/add-monitoring-agent-repo.sh 
-  bash add-monitoring-agent-repo.sh --also-install 
+  curl -sSO https://dl.google.com/cloudagents/add-monitoring-agent-repo.sh
+  bash add-monitoring-agent-repo.sh --also-install
   service stackdriver-agent start
 fi
 
@@ -67,6 +67,7 @@ then
     grep "browser_download_url.*linux_amd64" | cut -d : -f 2,3 | tr -d \" | xargs  curl -fsSL | \
     tar -xzf - docker-credential-gcr --to-stdout \
     > /usr/local/bin/docker-credential-gcr && chmod +x /usr/local/bin/docker-credential-gcr
+  su gitlab-runner -c 'docker-credential-gcr configure-docker -include-artifact-registry'
 fi
 
 # Install jq if not exists

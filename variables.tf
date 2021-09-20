@@ -79,6 +79,12 @@ variable "docker_machine_preemptible" {
   default     = false
 }
 
+variable "docker_machine_image" {
+  description = "A GCP custom image to use for spinning up docker-machines"
+  type        = string
+  default     = ""
+}
+
 variable "docker_machine_disk_type" {
   description = "The disk Type for docker-machine instances."
   type        = string
@@ -129,7 +135,7 @@ variable "runners_executor" {
 variable "runners_install_docker_credential_gcr" {
   description = "Install docker_credential_gcr inside `startup_script_pre_install` script"
   type        = bool
-  default     = false
+  default     = true
 }
 
 variable "runners_gitlab_url" {
@@ -399,4 +405,10 @@ variable "runners_services_volumes_tmpfs" {
 variable "runners_target_autoscale_cpu_utilization" {
   description = "The target CPU utilization that the autoscaler should maintain. If runner CPU utilization gets above this, a new runner is created until runners_max_replicas is reached"
   default     = 0.9
+}
+
+variable "runner_additional_service_account_roles" {
+  description = "Additional roles to pass to the Runner service account"
+  default     = []
+  type        = list(string)
 }

@@ -53,6 +53,9 @@ check_interval = 0
       "google-disk-type=${runners_disk_type}" ,
       "google-disk-size=${runners_disk_size}" ,
       "google-tags=${runners_tags}",
+      %{~ if runners_docker_machine_image != "" ~}
+      "google-machine-image=${runners_docker_machine_image}",
+      %{~ endif ~}
       %{~ if runners_use_internal_ip ~}
       "google-use-internal-ip",
       %{~ endif ~}
