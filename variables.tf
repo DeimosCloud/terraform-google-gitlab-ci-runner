@@ -105,7 +105,7 @@ variable "docker_machine_tags" {
 
 variable "docker_machine_use_internal_ip" {
   description = "If true, docker-machine instances will have only internal IPs."
-  default     = true
+  default     = false
   type        = bool
 }
 
@@ -300,9 +300,9 @@ variable "startup_script_post_install" {
 }
 
 variable "runners_use_internal_ip" {
-  description = "Restrict runners to the use of a Internal IP address. NOTE: NAT Router must be deployed in your network so that Runners can access resources on the internet"
+  description = "Restrict runners to the use of a Internal IP address. NOTE: NAT Gateway must be deployed in your network so that Runners can access resources on the internet"
   type        = bool
-  default     = true
+  default     = false
 }
 
 variable "cache_location" {

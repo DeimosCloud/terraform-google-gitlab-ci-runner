@@ -57,7 +57,7 @@ check_interval = 0
       "google-machine-image=${runners_docker_machine_image}",
       %{~ endif ~}
       %{~ if runners_use_internal_ip ~}
-      "google-use-internal-ip",
+      "google-use-internal-ip-only",
       %{~ endif ~}
       ${docker_machine_options}
     ]
