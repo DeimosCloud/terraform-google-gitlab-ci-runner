@@ -46,6 +46,8 @@ else
   # See: https://github.com/docker/machine/issues/3845#issuecomment-280389178
   export USER=root
   export HOME=/root
+  suffix="$(< /dev/urandom tr -dc _A-Z-a-z-0-9 | head -c6)"
+  dummymachine="${prefix}-gitlab-runner-dummy-machine-$suffix"
   echo "Verifying docker-machine and generating SSH keys ahead of time."
   docker-machine create --driver google \
       --google-project ${gcp_project} \
@@ -55,8 +57,8 @@ else
       --google-scopes https://www.googleapis.com/auth/cloud-platform \
       --google-disk-type pd-ssd \
       --google-tags ${runners_tags} \
-      ${prefix}-gitlab-runner-dummy-machine
-  docker-machine rm -y ${prefix}-gitlab-runner-dummy-machine
+      $dummymachine
+  docker-machine rm -y $dummymachine
   unset HOME
   unset USER
 fi
