@@ -24,7 +24,7 @@ resource "google_compute_firewall" "docker_machine" {
   }
 
   source_tags = [local.firewall_tag]
-  target_tags = [local.firewall_tag]
+  target_tags = [local.firewall_tag, "docker-machine"]
 }
 
 resource "google_compute_firewall" "internet" {
