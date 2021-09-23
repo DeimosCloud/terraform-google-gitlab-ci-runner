@@ -76,7 +76,7 @@ variable "docker_machine_machine_type" {
 variable "docker_machine_preemptible" {
   description = "If true, docker-machine instances will be premptible"
   type        = bool
-  default     = false
+  default     = true
 }
 
 variable "docker_machine_image" {

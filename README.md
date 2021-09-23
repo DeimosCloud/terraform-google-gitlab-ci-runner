@@ -115,7 +115,7 @@ Full contributing guidelines are covered [here](CONTRIBUTING.md).
 | docker\_machine\_image | A GCP custom image to use for spinning up docker-machines | `string` | `""` | no |
 | docker\_machine\_machine\_type | The Machine Type for the docker-machine instances. | `string` | `"f1-micro"` | no |
 | docker\_machine\_options | List of additional options for the docker machine config. Each element of this list must be a key=value pair. E.g. '["google-zone=a"]' | `list(string)` | `[]` | no |
-| docker\_machine\_preemptible | If true, docker-machine instances will be premptible | `bool` | `false` | no |
+| docker\_machine\_preemptible | If true, docker-machine instances will be premptible | `bool` | `true` | no |
 | docker\_machine\_tags | Additional Network tags to be attached to the docker-machine instances. | `list(string)` | `[]` | no |
 | docker\_machine\_use\_internal\_ip | If true, docker-machine instances will have only internal IPs. | `bool` | `false` | no |
 | gitlab\_runner\_registration\_config | Configuration used to register the runner. Available at https://docs.gitlab.com/ee/api/runners.html#register-a-new-runner. | `map` | <pre>{<br>  "access_level": "not_protected",<br>  "description": "",<br>  "locked_to_project": "",<br>  "maximum_timeout": "",<br>  "registration_token": "",<br>  "run_untagged": "",<br>  "tag_list": ""<br>}</pre> | no |
