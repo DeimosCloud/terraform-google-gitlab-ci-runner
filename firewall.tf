@@ -10,7 +10,7 @@ resource "google_compute_firewall" "ssh" {
   }
 
   source_ranges = var.runners_ssh_allowed_cidr_blocks
-  target_tags   = ["gitlab"]
+  target_tags   = [local.firewall_tag]
 }
 
 resource "google_compute_firewall" "docker_machine" {
@@ -23,8 +23,8 @@ resource "google_compute_firewall" "docker_machine" {
     ports    = ["2376"]
   }
 
-  source_tags = ["gitlab"]
-  target_tags = ["gitlab"]
+  source_tags = [local.firewall_tag]
+  target_tags = [local.firewall_tag]
 }
 
 resource "google_compute_firewall" "internet" {
@@ -37,5 +37,5 @@ resource "google_compute_firewall" "internet" {
     protocol = "tcp"
   }
 
-  target_tags = ["gitlab"]
+  target_tags = [local.firewall_tag]
 }

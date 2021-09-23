@@ -2,7 +2,8 @@ locals {
   default_labels = {
     "managed-by" = "terraform"
   }
-  bucket_name = "${var.prefix}-gitlab-runner-cache-${random_id.this.hex}"
+  bucket_name  = "${var.prefix}-gitlab-runner-cache-${random_id.this.hex}"
+  firewall_tag = "${var.prefix}-gitlab-runner"
 
   // Convert list to a string separated and prepend by a comma
   docker_machine_options_string = format(
@@ -50,7 +51,7 @@ locals {
       runners_gitlab_url                    = var.runners_gitlab_url
       runners_service_account               = google_service_account.agent.email
       runners_service_account_json          = base64decode(google_service_account_key.agent.private_key)
-      runners_tags                          = join(",", distinct(concat(["gitlab"], var.docker_machine_tags)))
+      runners_tags                          = join(",", distinct(concat([local.firewall_tag], var.docker_machine_tags)))
       runners_enable_monitoring             = var.runners_enable_monitoring
 
   })
