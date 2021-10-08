@@ -1,5 +1,6 @@
 concurrent = ${runners_concurrent}
 check_interval = 0
+listen_address = "127.0.0.1:9252"
 
 [[runners]]
   name = "${runners_name}"

@@ -30,6 +30,8 @@ locals {
 
   template_startup_script = templatefile("${path.module}/templates/startup-script.sh.tpl",
     {
+      collectd_exporter                     = local.collectd_exporter
+      collectd_conf                         = local.collectd_conf
       docker_machine_download_url           = var.docker_machine_download_url
       gitlab_runner_version                 = var.gitlab_runner_version == "" ? "gitlab-runner" : "gitlab-runner-${var.gitlab_runner_version}"
       pre_install                           = var.startup_script_pre_install
@@ -62,6 +64,9 @@ locals {
     runners_gitlab_url = var.runners_gitlab_url
   })
 
+  collectd_conf = file("${path.module}/templates/collectd.conf.tpl")
+
+  collectd_exporter = file("${path.module}/templates/collectd-gitlab-exporter.sh")
   template_runner_config = templatefile("${path.module}/templates/runner-config.toml.tpl",
     {
       gitlab_url                     = var.runners_gitlab_url

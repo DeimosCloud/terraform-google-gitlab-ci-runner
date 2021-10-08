@@ -14,6 +14,23 @@ if [[ `echo ${runners_enable_monitoring}` == "true" ]]; then
   curl -sSO https://dl.google.com/cloudagents/add-monitoring-agent-repo.sh
   bash add-monitoring-agent-repo.sh --also-install
   service stackdriver-agent start
+
+  # using 'EOF' to avoid variable expansion in the bash script https://stackoverflow.com/a/27921346/7167357
+  cat > /etc/stackdriver/collect-running-jobs.sh <<- 'EOF'
+${collectd_exporter}
+EOF
+  chmod +x /etc/stackdriver/collect-running-jobs.sh 
+
+  # Autoscaling requires the labels to contain the instance ID and Zone. We can get those from the metadata
+  # https://cloud.google.com/compute/docs/autoscaler/scaling-stackdriver-monitoring-metrics#choose_a_valid_custom_metric
+  instance_id="$(curl http://metadata.google.internal/computeMetadata/v1/instance/id -H Metadata-Flavor:Google --silent)"
+  full_instance_zone="$(curl http://metadata.google.internal/computeMetadata/v1/instance/zone -H Metadata-Flavor:Google --silent)"
+  instance_zone=`echo $full_instance_zone|cut -d "/" -f 4`
+  cat > /etc/stackdriver/collectd.d/gitlab-runner.conf <<- EOF
+${collectd_conf}
+EOF
+
+  service stackdriver-agent restart
 fi
 
 ${pre_install}
@@ -46,7 +63,7 @@ else
   # See: https://github.com/docker/machine/issues/3845#issuecomment-280389178
   export USER=root
   export HOME=/root
-  suffix="$(< /dev/urandom tr -dc _A-Z-a-z-0-9 | head -c6)"
+  suffix="$(< /dev/urandom tr -dc _a-z-0-9 | head -c6)"
   dummymachine="${prefix}-gitlab-runner-dummy-machine-$suffix"
   echo "Verifying docker-machine and generating SSH keys ahead of time."
   docker-machine create --driver google \
@@ -78,6 +95,7 @@ if ! [ -x "$(command -v jq)" ]; then
 fi
 
 # Get existing token from local file, if exists. Else register new Runner
+touch /etc/gitlab-runner/token
 token=$(cat /etc/gitlab-runner/token)
 if [[ "$token" == "" ]]
 then

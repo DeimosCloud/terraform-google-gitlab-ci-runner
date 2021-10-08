@@ -40,11 +40,36 @@ resource "google_service_account_iam_member" "agent_runner" {
   member             = "serviceAccount:${google_service_account.runner.email}"
 }
 
+resource "google_monitoring_metric_descriptor" "jobs" {
+  count        = var.runners_enable_monitoring ? 1 : 0
+  description  = "The number of active running gitlab jobs on the VM"
+  display_name = "Gitlab-Runner Jobs"
+  project      = var.project
+  type         = "custom.googleapis.com/gitlab_runner/jobs"
+  metric_kind  = "GAUGE"
+  value_type   = "DOUBLE"
+  labels {
+    key         = "instance"
+    value_type  = "STRING"
+    description = "The GCP Instance that hosts the runner"
+  }
+  labels {
+    key         = "instance_id"
+    value_type  = "STRING"
+    description = "unique numerical ID assigned to the VM"
+  }
+  labels {
+    key         = "zone"
+    value_type  = "STRING"
+    description = "name of the zone the instance is in."
+  }
+}
+
 resource "google_compute_instance_template" "this" {
   name_prefix = "${var.prefix}-gitlab-runner-"
   description = "This template is used to create Gitlab Runner instances."
 
-  tags = distinct(concat(["gitlab"], var.runners_executor == "docker+machine" ? var.docker_machine_tags : var.runners_tags))
+  tags = distinct(concat([local.firewall_tag], var.runners_executor == "docker+machine" ? var.docker_machine_tags : var.runners_tags))
 
   labels = local.runners_labels
 
@@ -125,8 +150,14 @@ resource "google_compute_region_autoscaler" "this" {
     max_replicas = var.runners_max_replicas
     min_replicas = var.runners_min_replicas
 
-    cpu_utilization {
-      target = var.runners_target_autoscale_cpu_utilization
+    dynamic "metric" {
+      for_each = var.runners_enable_monitoring ? [google_monitoring_metric_descriptor.jobs[0].type] : []
+      content {
+        name = metric.value
+        # Scale up when the number of jobs running on the VM is almost the value of the concurrent
+        target = var.runners_concurrent - 2
+        type   = "GAUGE"
+      }
     }
   }
 

@@ -15,8 +15,10 @@ In this scenario the runner agent is running on a GCP Compute Instance and runne
 
 ### GitLab CI docker runner
 
-In this scenario _not_ docker machine is used but docker to schedule the builds. Builds will run on the same compute instance as the agent. Auto scaling is supported via the `var.runners_max_replicas` and `var.runners_target_autoscale_cpu_utilization`. It uses Google Managed Instance Group Autoscaler to scale when the CPU usage of the instances move above `var.runners_target_autoscale_cpu_utilization`
+In this scenario _not_ docker machine is used but docker to schedule the builds. Builds will run on the same compute instance as the agent. 
 
+## Autoscaling
+Both docker-machine runner and docker runners autoscale using GCP Custom metrics. The runner publishes running jobs metrics to stackdriver which is then used to scale up/down the number of active runners. `var.runners_min_replicas` and `var.runners_max_replicas` defined variables for the minimum and maximum number of runners respectively. It uses Google Managed Instance Group Autoscaler to scale when the average of running jobs exceeds `var.runners_concurrent - 2`. 
 
 > NOTE: If runners are set to use internal IPs, a Cloud NAT must be deployed for runners to be able to reach internet
 
@@ -115,7 +117,7 @@ Full contributing guidelines are covered [here](CONTRIBUTING.md).
 | docker\_machine\_image | A GCP custom image to use for spinning up docker-machines | `string` | `""` | no |
 | docker\_machine\_machine\_type | The Machine Type for the docker-machine instances. | `string` | `"f1-micro"` | no |
 | docker\_machine\_options | List of additional options for the docker machine config. Each element of this list must be a key=value pair. E.g. '["google-zone=a"]' | `list(string)` | `[]` | no |
-| docker\_machine\_preemptible | If true, docker-machine instances will be premptible | `bool` | `true` | no |
+| docker\_machine\_preemptible | If true, docker-machine instances will be premptible | `bool` | `false` | no |
 | docker\_machine\_tags | Additional Network tags to be attached to the docker-machine instances. | `list(string)` | `[]` | no |
 | docker\_machine\_use\_internal\_ip | If true, docker-machine instances will have only internal IPs. | `bool` | `false` | no |
 | gitlab\_runner\_registration\_config | Configuration used to register the runner. Available at https://docs.gitlab.com/ee/api/runners.html#register-a-new-runner. | `map` | <pre>{<br>  "access_level": "not_protected",<br>  "description": "",<br>  "locked_to_project": "",<br>  "maximum_timeout": "",<br>  "registration_token": "",<br>  "run_untagged": "",<br>  "tag_list": ""<br>}</pre> | no |
