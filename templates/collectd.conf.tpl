@@ -16,6 +16,8 @@ PreCacheChain "PreCache"
       PluginInstance "^gitlab_runner$"
     </Match>
     <Target "set">
+      # https://cloud.google.com/compute/docs/autoscaler/scaling-stackdriver-monitoring-metrics#custom_metrics
+      # zone and instance_id are required for autoscaling.
       TypeInstance "jobs"
       MetaData "stackdriver_metric_type" "custom.googleapis.com/gitlab_runner/jobs"
       MetaData "label:instance_id" "${instance_id}"
