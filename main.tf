@@ -77,7 +77,9 @@ resource "google_compute_instance_template" "this" {
   machine_type         = var.runners_executor == "docker+machine" ? var.docker_machine_machine_type : var.runners_machine_type
 
   scheduling {
-    preemptible = var.runners_executor == "docker+machine" ? var.docker_machine_preemptible : var.runners_preemptible
+    # Automatic restart has to be set to false if Preemption is to be enabled
+    automatic_restart = var.runners_executor == "docker+machine" ? !var.docker_machine_preemptible : !var.runners_preemptible
+    preemptible       = var.runners_executor == "docker+machine" ? var.docker_machine_preemptible : var.runners_preemptible
   }
 
   // Create a new boot disk from an image
