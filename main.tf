@@ -43,7 +43,7 @@ resource "google_service_account_iam_member" "agent_runner" {
 resource "google_monitoring_metric_descriptor" "jobs" {
   count        = var.runners_enable_monitoring ? 1 : 0
   description  = "The number of active running gitlab jobs on the VM"
-  display_name = "Gitlab-Runner Jobs"
+  display_name = "Gitlab Runner Jobs"
   project      = var.project
   type         = "custom.googleapis.com/gitlab_runner/jobs"
   metric_kind  = "GAUGE"
@@ -147,8 +147,9 @@ resource "google_compute_region_autoscaler" "this" {
   target = google_compute_region_instance_group_manager.this.id
 
   autoscaling_policy {
-    max_replicas = var.runners_max_replicas
-    min_replicas = var.runners_min_replicas
+    max_replicas    = var.runners_max_replicas
+    min_replicas    = var.runners_min_replicas
+    cooldown_period = 120 # Wait 120seconds before starting to collect metrics from instance
 
     dynamic "metric" {
       for_each = var.runners_enable_monitoring ? [google_monitoring_metric_descriptor.jobs[0].type] : []

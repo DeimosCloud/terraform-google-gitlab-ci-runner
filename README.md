@@ -157,7 +157,7 @@ Full contributing guidelines are covered [here](CONTRIBUTING.md).
 | runners\_post\_build\_script | Commands to be executed on the Runner just after executing the build, but before executing after\_script. | `string` | `"\"\""` | no |
 | runners\_pre\_build\_script | Script to execute in the pipeline just before the build, will be used in the runner config.toml | `string` | `"\"\""` | no |
 | runners\_pre\_clone\_script | Commands to be executed on the Runner before cloning the Git repository. this can be used to adjust the Git client configuration first, for example. | `string` | `"\"\""` | no |
-| runners\_preemptible | If true, runner compute instances will be premptible | `bool` | `true` | no |
+| runners\_preemptible | If true, runner compute instances will be premptible | `bool` | `false` | no |
 | runners\_privileged | Runners will run in privileged mode, will be used in the runner config.toml | `bool` | `true` | no |
 | runners\_pull\_policy | pull\_policy for the runners, will be used in the runner config.toml | `string` | `"always"` | no |
 | runners\_request\_concurrency | Limit number of concurrent requests for new jobs from GitLab (default 1) | `number` | `1` | no |

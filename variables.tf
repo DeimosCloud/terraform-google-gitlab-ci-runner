@@ -40,7 +40,7 @@ variable "runners_machine_type" {
 variable "runners_preemptible" {
   description = "If true, runner compute instances will be premptible"
   type        = bool
-  default     = true
+  default     = false
 }
 
 variable "runners_disk_size" {
