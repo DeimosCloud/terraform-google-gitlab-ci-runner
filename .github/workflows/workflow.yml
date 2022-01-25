@@ -12,7 +12,7 @@ on:
 jobs:
   validate:
     name: Validate
-    # runs-on: [self-hosted, linux, ARM64]
+    runs-on: ubuntu-latest
     steps:
     - name: Check out code
       uses: actions/checkout@v1
