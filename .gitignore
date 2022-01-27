@@ -1,2 +1,27 @@
-.terraform
+*.tfvars
+*.tfstate*
+.terraform/
+**/inspec.lock
+*.gem
+Gemfile.lock
+terraform.tfstate.d/
+eks-admin-cluster-role-binding.yaml
+eks-admin-service-account.yaml
+.idea/
+*.iml
+config-map-aws-auth*.yaml
+kubeconfig_*
+*.swp
+
+# Local .terraform directories
+**/.terraform/*
+
+# Terraform lockfile
 .terraform.lock.hcl
+
+#  Crash log files
+crash.log
+
+# Ignore CLI configuration files
+.terraformrc
+terraform.rc
