@@ -158,7 +158,7 @@ resource "google_compute_region_autoscaler" "this" {
       content {
         name = metric.value
         # Scale up when the number of jobs running on the VM is almost the value of the concurrent
-        target = var.runners_concurrent - 2
+        target = var.runners_concurrent
         type   = "GAUGE"
       }
     }
