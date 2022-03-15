@@ -14,7 +14,6 @@ listen_address = "127.0.0.1:9252"
   request_concurrency = ${runners_request_concurrency}
   output_limit = ${runners_output_limit}
   limit = ${runners_limit}
-  %{~ if runners_executor == "docker" ~}
   [runners.docker]
     tls_verify = false
     image = "${runners_image}"
@@ -29,7 +28,6 @@ listen_address = "127.0.0.1:9252"
     ${runners_volumes_tmpfs}
   [runners.docker.services_tmpfs]
     ${runners_services_volumes_tmpfs}
-  %{~ endif ~}
   [runners.cache]
     Type = "gcs"
     Shared = ${shared_cache}

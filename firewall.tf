@@ -1,6 +1,6 @@
 resource "google_compute_firewall" "ssh" {
   count       = var.runners_allow_ssh_access ? 1 : 0
-  name        = "${var.prefix}-gitlab-allow-ssh"
+  name        = "${var.prefix}-gitlab-runner-allow-ssh"
   description = "Allow SSH to Runner instances"
   network     = data.google_compute_network.this.name
 
@@ -14,7 +14,7 @@ resource "google_compute_firewall" "ssh" {
 }
 
 resource "google_compute_firewall" "docker_machine" {
-  name        = "docker-machines"
+  name        = "gitlab-runner-docker-machines"
   description = "Allow docker-machine traffic within on port 2376"
   network     = data.google_compute_network.this.name
 
@@ -28,7 +28,7 @@ resource "google_compute_firewall" "docker_machine" {
 }
 
 resource "google_compute_firewall" "internet" {
-  name        = "${var.prefix}-gitlab-allow-internet"
+  name        = "${var.prefix}-gitlab-runner-allow-internet"
   description = "Allow connection to internet"
   network     = data.google_compute_network.this.name
 
