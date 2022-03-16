@@ -60,6 +60,8 @@ listen_address = "127.0.0.1:9252"
       %{~ endif ~}
       %{~ if runners_use_internal_ip ~}
       "google-use-internal-ip-only",
+      %{~ else ~}
+      "google-use-internal-ip",
       %{~ endif ~}
       ${docker_machine_options}
     ]

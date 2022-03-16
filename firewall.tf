@@ -14,7 +14,7 @@ resource "google_compute_firewall" "ssh" {
 }
 
 resource "google_compute_firewall" "docker_machine" {
-  name        = "gitlab-runner-docker-machines"
+  name        = "docker-machines"
   description = "Allow docker-machine traffic within on port 2376"
   network     = data.google_compute_network.this.name
 
@@ -23,8 +23,22 @@ resource "google_compute_firewall" "docker_machine" {
     ports    = ["2376"]
   }
 
-  source_tags = [local.firewall_tag]
-  target_tags = [local.firewall_tag, "docker-machine"]
+  source_tags = concat([local.firewall_tag], var.docker_machine_tags)
+  target_tags = concat(["docker-machine", local.firewall_tag], var.runners_tags)
+}
+
+resource "google_compute_firewall" "docker_machine_ssh" {
+  name        = "${var.prefix}-gitlab-runner-docker-machine-allow-ssh"
+  description = "Allow ssh to docker-machine from runner "
+  network     = data.google_compute_network.this.name
+
+  allow {
+    protocol = "tcp"
+    ports    = ["22"]
+  }
+
+  source_tags = concat([local.firewall_tag], var.docker_machine_tags)
+  target_tags = concat(["docker-machine", local.firewall_tag], var.runners_tags)
 }
 
 resource "google_compute_firewall" "internet" {
