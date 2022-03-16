@@ -74,6 +74,10 @@ else
       --google-scopes https://www.googleapis.com/auth/cloud-platform \
       --google-disk-type pd-ssd \
       --google-tags ${runners_tags} \
+      --google-network ${runners_network} \
+      %{~ if runners_subnetwork != "" ~}
+      --google-subnetwork ${runners_subnetwork} \
+      %{~ endif ~}
       $dummymachine
   docker-machine rm -y $dummymachine
   unset HOME

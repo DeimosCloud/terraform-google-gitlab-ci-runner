@@ -51,6 +51,7 @@ module "runner" {
   source  = "DeimosCloud/gitlab-ci-runner/google"
 
   network = "default"
+  subnetwork = "someNetwork"
   region  = "europe-west1"
   project = local.project_id
 

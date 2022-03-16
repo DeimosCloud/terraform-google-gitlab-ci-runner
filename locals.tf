@@ -53,9 +53,10 @@ locals {
       runners_gitlab_url                    = var.runners_gitlab_url
       runners_service_account               = google_service_account.agent.email
       runners_service_account_json          = base64decode(google_service_account_key.agent.private_key)
-      runners_tags                          = join(",", distinct(concat([local.firewall_tag], var.docker_machine_tags)))
+      runners_tags                          = join(",", distinct(concat([local.firewall_tag], var.runners_tags)))
       runners_enable_monitoring             = var.runners_enable_monitoring
-
+      runners_network                       = var.network
+      runners_subnetwork                    = var.subnetwork
   })
 
   template_shutdown_script = templatefile("${path.module}/templates/shutdown-script.sh.tpl", {
@@ -79,7 +80,7 @@ locals {
       runners_machine_type           = var.runners_machine_type
       runners_disk_type              = var.runners_disk_type
       runners_disk_size              = var.runners_disk_size
-      runners_tags                   = join(",", distinct(concat(["gitlab"], var.runners_tags)))
+      runners_tags                   = join(",", distinct(concat([local.firewall_tag], var.runners_tags)))
       runners_labels                 = local.agent_machine_labels
       runners_use_internal_ip        = var.runners_use_internal_ip
       docker_machine_options         = length(var.docker_machine_options) == 0 ? "" : local.docker_machine_options_string
