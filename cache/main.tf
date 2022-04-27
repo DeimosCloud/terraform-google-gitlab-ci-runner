@@ -3,7 +3,7 @@
 #-----------------------------
 resource "google_storage_bucket" "cache" {
   name          = var.bucket_name
-  location      = var.cache_location
+  location      = var.cache_location 
   force_destroy = true
   storage_class = var.cache_storage_class
 
@@ -24,11 +24,12 @@ resource "google_storage_bucket" "cache" {
   labels = var.labels
 }
 
+
 #----------------------------------------------------------------
 # create service account with access to the above created bucket
 #----------------------------------------------------------------
 resource "google_service_account" "cache_admin" {
-  account_id   = "${var.prefix}-gitlab-runner-agent"
+  account_id   = "${var.prefix}-gitlab-runner-cache"
   display_name = "GitLab CI Worker"
 }
 
