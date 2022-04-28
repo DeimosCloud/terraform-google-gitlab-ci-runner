@@ -3,7 +3,7 @@
 #-----------------------------
 resource "google_storage_bucket" "cache" {
   name          = var.bucket_name
-  location      = var.cache_location 
+  location      = var.cache_location
   force_destroy = true
   storage_class = var.cache_storage_class
 
