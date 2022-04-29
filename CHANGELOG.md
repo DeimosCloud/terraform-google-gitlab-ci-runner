@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+### [1.0.11](https://github.com/DeimosCloud/terraform-google-gitlab-ci-runner/compare/v1.0.10...v1.0.11) (2022-04-29)
+
+
+### Bug Fixes
+
+* update runner machine image to ubuntu-2004 to fix docker installation ([093ba99](https://github.com/DeimosCloud/terraform-google-gitlab-ci-runner/commit/093ba995d1a67d73be76e365a06a4b5c8d2b93d6))
+
 ### [1.0.10](https://github.com/DeimosCloud/terraform-google-gitlab-ci-runner/compare/v1.0.9...v1.0.10) (2022-04-29)
 
 
