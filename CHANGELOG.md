@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+### [1.0.10](https://github.com/DeimosCloud/terraform-google-gitlab-ci-runner/compare/v1.0.9...v1.0.10) (2022-04-29)
+
+
+### Bug Fixes
+
+* use internal Ip for dummy runner so that firewall rule works ([f57a91f](https://github.com/DeimosCloud/terraform-google-gitlab-ci-runner/commit/f57a91fd66357ab7805db8efc142dad74cf72893))
+
 ### [1.0.9](https://github.com/DeimosCloud/terraform-google-gitlab-ci-runner/compare/v1.0.8...v1.0.9) (2022-04-05)
 
 
