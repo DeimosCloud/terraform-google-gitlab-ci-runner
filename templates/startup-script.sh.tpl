@@ -75,6 +75,7 @@ else
       --google-disk-type pd-ssd \
       --google-tags ${runners_tags} \
       --google-network ${runners_network} \
+      --google-use-internal-ip \
       %{~ if runners_subnetwork != "" ~}
       --google-subnetwork ${runners_subnetwork} \
       %{~ endif ~}
