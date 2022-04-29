@@ -79,10 +79,10 @@ variable "docker_machine_preemptible" {
   default     = false
 }
 
-variable "docker_machine_image" {
-  description = "A GCP custom image to use for spinning up docker-machines"
+variable "runner_machine_image" {
+  description = "A GCP custom image to use for spinning up runners when using docker-machine"
   type        = string
-  default     = ""
+  default     = "ubuntu-os-cloud/global/images/ubuntu-2004-focal-v20220419"
 }
 
 variable "docker_machine_disk_type" {

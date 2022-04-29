@@ -86,7 +86,7 @@ locals {
       docker_machine_options         = length(var.docker_machine_options) == 0 ? "" : local.docker_machine_options_string
       runners_service_account        = google_service_account.agent.email
       runners_additional_volumes     = local.runners_additional_volumes
-      runners_docker_machine_image   = var.docker_machine_image
+      runners_docker_machine_image   = var.runner_machine_image
       runners_name                   = var.runners_name
       runners_executor               = var.runners_executor
       runners_limit                  = var.runners_limit
