@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+### [1.0.12](https://github.com/DeimosCloud/terraform-google-gitlab-ci-runner/compare/v1.0.11...v1.0.12) (2022-04-29)
+
+
+### Bug Fixes
+
+* use the same image for spinning up dummy machine and update default runner machine image to COS ([7c24b17](https://github.com/DeimosCloud/terraform-google-gitlab-ci-runner/commit/7c24b17f8997d6558e917ee8f095422d29b5cc43))
+
 ### [1.0.11](https://github.com/DeimosCloud/terraform-google-gitlab-ci-runner/compare/v1.0.10...v1.0.11) (2022-04-29)
 
 
