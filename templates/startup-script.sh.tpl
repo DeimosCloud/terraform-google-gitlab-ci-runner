@@ -63,7 +63,7 @@ else
   # See: https://github.com/docker/machine/issues/3845#issuecomment-280389178
   export USER=root
   export HOME=/root
-  suffix="$(< /dev/urandom tr -dc _a-z-0-9 | head -c6)"
+  suffix="$(< /dev/urandom tr -dc a-z-0-9 | head -c6)"
   dummymachine="${prefix}-gitlab-runner-dummy-machine-$suffix"
   echo "Verifying docker-machine and generating SSH keys ahead of time."
   docker-machine create --driver google \
@@ -78,6 +78,9 @@ else
       --google-use-internal-ip \
       %{~ if runners_subnetwork != "" ~}
       --google-subnetwork ${runners_subnetwork} \
+      %{~ endif ~}
+      %{~ if runners_docker_machine_image != "" ~}
+      --google-machine-image ${runners_docker_machine_image} \
       %{~ endif ~}
       $dummymachine
   docker-machine rm -y $dummymachine
@@ -136,3 +139,4 @@ ${post_install}
 
 service gitlab-runner restart
 chkconfig gitlab-runner on
+

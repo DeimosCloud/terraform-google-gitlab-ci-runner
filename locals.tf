@@ -57,6 +57,7 @@ locals {
       runners_enable_monitoring             = var.runners_enable_monitoring
       runners_network                       = var.network
       runners_subnetwork                    = var.subnetwork
+      runners_docker_machine_image          = var.runner_machine_image
   })
 
   template_shutdown_script = templatefile("${path.module}/templates/shutdown-script.sh.tpl", {
@@ -116,3 +117,4 @@ locals {
     }
   )
 }
+

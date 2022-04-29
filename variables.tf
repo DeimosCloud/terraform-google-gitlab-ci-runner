@@ -82,7 +82,7 @@ variable "docker_machine_preemptible" {
 variable "runner_machine_image" {
   description = "A GCP custom image to use for spinning up runners when using docker-machine"
   type        = string
-  default     = "ubuntu-os-cloud/global/images/ubuntu-2004-focal-v20220419"
+  default     = "cos-cloud/global/images/family/cos-97-lts"
 }
 
 variable "docker_machine_disk_type" {
