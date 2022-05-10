@@ -19,66 +19,30 @@ resource "google_project_iam_member" "this" {
 # create runner node pool
 #--------------------------------
 
-# resource "google_container_node_pool" "gitlab_runner_pool" {
-#   name               = var.runner_node_pool_name
-#   # cluster            = var.cluster_id
-#   cluster            = data.google_container_cluster.this_cluster.id
-#   initial_node_count = var.initial_node_count
-
-#   autoscaling {
-#     min_node_count = var.min_node_count
-#     max_node_count = var.max_node_count
-#   }
-
-#   upgrade_settings {
-#     max_surge       = var.max_surge
-#     max_unavailable = var.max_unavailable
-#   }
-
-#   node_config {
-#     machine_type    = var.machine_type
-#     labels          = var.node_labels
-#     service_account = google_service_account.runner_nodes.email
-#     taint           = var.node_taints
-
-#     oauth_scopes = [
-#       "https://www.googleapis.com/auth/cloud-platform"
-#     ]
-#   }
-# }
-
-module "gke_node_pool" {
-  source = "/Users/daphneyigwe/Desktop/terraform-google-gke/modules/gke-node-pool"
-  # source  = "DeimosCloud/gke/google//modules/gke-node-pool"
-  # version = "1.0.3"
-  project_id = var.project
-  location   = var.cluster_location
-  cluster    = var.cluster_name
-
+resource "google_container_node_pool" "gitlab_runner_pool" {
   name               = var.runner_node_pool_name
-  kubernetes_version = var.kubernetes_version
-  zones              = var.node_zones
-
-  auto_upgrade       = var.auto_upgrade
+  cluster            = data.google_container_cluster.this_cluster.id
   initial_node_count = var.initial_node_count
-  min_node_count     = var.min_node_count
-  max_node_count     = var.max_node_count
 
-  image_type   = var.node_image_type
-  machine_type = var.machine_type
+  autoscaling {
+    min_node_count = var.min_node_count
+    max_node_count = var.max_node_count
+  }
 
-  labels = var.node_labels
-  taints = var.node_taints
+  upgrade_settings {
+    max_surge       = var.max_surge
+    max_unavailable = var.max_unavailable
+  }
 
-  disk_size_gb = var.disk_size_gb
-  disk_type    = var.disk_type
+  node_config {
+    machine_type    = var.machine_type
+    labels          = var.node_labels
+    service_account = google_service_account.runner_nodes.email
+    taint           = var.node_taints
 
-  is_preemptible = var.node_is_preemptible
-
-  service_account = google_service_account.runner_nodes.email
-  oauth_scopes    = var.oauth_scopes
+    oauth_scopes = var.oauth_scopes
+  }
 }
-
 
 
 #----------------------------------------------------------
@@ -115,7 +79,7 @@ resource "kubernetes_namespace" "runner_namespace" {
   }
 
   depends_on = [
-    module.gke_node_pool
+    google_container_node_pool.gitlab_runner_pool
   ]
 }
 
@@ -131,8 +95,7 @@ resource "kubernetes_secret" "cache_secret" {
   }
 
   depends_on = [
-    kubernetes_namespace.runner_namespace,
-    module.cache
+    kubernetes_namespace.runner_namespace
   ]
 }
 
@@ -141,10 +104,8 @@ resource "kubernetes_secret" "cache_secret" {
 # set up gitlab runner using the deimos kubernetes gitlab runner module
 #-----------------------------------------------------------------------
 module "kubernetes_gitlab_runner" {
-  # source = "DeimosCloud/gitlab-runner/kubernetes"
-  source = "/Users/daphneyigwe/Desktop/terraform-kubernetes-gitlab-runner"
-  # if cache local is used then no need to create cache module or kubernetes secret.
-
+  source        = "DeimosCloud/gitlab-runner/kubernetes"
+  version       = "1.3.0"
   release_name  = var.release_name
   chart_version = var.chart_version
   namespace     = var.namespace
