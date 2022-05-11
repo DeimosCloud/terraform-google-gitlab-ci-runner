@@ -1,10 +1,19 @@
 
+#---------------------------
+# get cluster information
+#---------------------------
+
+data "google_container_cluster" "this_cluster" {
+  name     = var.cluster_name
+  location = var.cluster_location
+}
+
 #--------------------------------------------------------------------
 # create service account for cluster nodes and assign them IAM roles
 #--------------------------------------------------------------------
 
 resource "google_service_account" "runner_nodes" {
-  account_id   = "${var.prefix}-gitlab-runner-nodes"
+  account_id   = "${var.prefix}-nodes-${random_id.node_pool_suffix.hex}"
   display_name = "GitLab CI Runner"
 }
 
@@ -19,28 +28,31 @@ resource "google_project_iam_member" "this" {
 # create runner node pool
 #--------------------------------
 
+resource "random_id" "node_pool_suffix" {
+  byte_length = 4
+}
+
 resource "google_container_node_pool" "gitlab_runner_pool" {
-  name               = var.runner_node_pool_name
+  name               = local.node_pool_name
   cluster            = data.google_container_cluster.this_cluster.id
   initial_node_count = var.initial_node_count
+  node_locations     = var.runner_node_pool_zones
 
   autoscaling {
-    min_node_count = var.min_node_count
-    max_node_count = var.max_node_count
-  }
-
-  upgrade_settings {
-    max_surge       = var.max_surge
-    max_unavailable = var.max_unavailable
+    min_node_count = var.runner_node_pool_min_node_count
+    max_node_count = var.runner_node_pool_max_node_count
   }
 
   node_config {
-    machine_type    = var.machine_type
-    labels          = var.node_labels
+    image_type      = var.runner_node_pool_image_type
+    disk_size_gb    = var.runner_node_pool_disk_size_gb
+    disk_type       = var.runner_node_pool_disk_type
+    machine_type    = var.runner_node_pool_machine_type
+    labels          = var.runner_node_pool_node_labels
     service_account = google_service_account.runner_nodes.email
-    taint           = var.node_taints
+    taint           = var.runner_node_pool_node_taints
 
-    oauth_scopes = var.oauth_scopes
+    oauth_scopes = var.runner_node_pool_oauth_scopes
   }
 }
 
@@ -50,16 +62,15 @@ resource "google_container_node_pool" "gitlab_runner_pool" {
 #-----------------------------------------------------------
 
 module "cache" {
-  source      = "../cache"
-  count       = local.count
-  bucket_name = var.bucket_name
-  # cache_location          = var.cache_location
-  cache_location          = var.cache_location != null ? var.cache_location : var.region
-  labels                  = var.node_labels
-  cache_storage_class     = var.cache_storage_class
-  cache_bucket_versioning = var.cache_bucket_versioning
-  cache_expiration_days   = var.cache_expiration_days
-  prefix                  = var.prefix
+  source                 = "../cache"
+  count                  = local.count
+  bucket_name            = local.cache_bucket_name
+  bucket_location        = var.cache_location
+  bucket_labels          = var.cache_labels
+  bucket_storage_class   = var.cache_storage_class
+  bucket_versioning      = var.cache_bucket_versioning
+  bucket_expiration_days = var.cache_expiration_days
+  prefix                 = var.prefix
 }
 
 
@@ -95,6 +106,7 @@ resource "kubernetes_secret" "cache_secret" {
   }
 
   depends_on = [
+    google_container_node_pool.gitlab_runner_pool,
     kubernetes_namespace.runner_namespace
   ]
 }
@@ -104,9 +116,10 @@ resource "kubernetes_secret" "cache_secret" {
 # set up gitlab runner using the deimos kubernetes gitlab runner module
 #-----------------------------------------------------------------------
 module "kubernetes_gitlab_runner" {
-  source        = "DeimosCloud/gitlab-runner/kubernetes"
-  version       = "1.3.0"
-  release_name  = var.release_name
+  source  = "DeimosCloud/gitlab-runner/kubernetes"
+  version = "~>1.3.0"
+
+  release_name  = local.release
   chart_version = var.chart_version
   namespace     = var.namespace
 
@@ -114,7 +127,7 @@ module "kubernetes_gitlab_runner" {
   concurrent = var.concurrent
   replicas   = var.replicas
 
-  runner_name               = var.runner_name
+  runner_name               = local.runner_name
   runner_token              = var.runner_token
   runner_tags               = var.runner_tags
   runner_registration_token = var.runner_registration_token
@@ -123,7 +136,7 @@ module "kubernetes_gitlab_runner" {
   run_untagged_jobs         = var.run_untagged_jobs
   unregister_runners        = var.unregister_runners
 
-  manager_node_selectors   = var.node_labels
+  manager_node_selectors   = var.runner_node_pool_node_labels
   manager_node_tolerations = var.manager_node_tolerations
   manager_pod_annotations  = var.manager_pod_annotations
   manager_pod_labels       = var.manager_pod_labels
@@ -137,19 +150,16 @@ module "kubernetes_gitlab_runner" {
   docker_fs_group = var.docker_fs_group
 
   image_pull_secrets                 = var.image_pull_secrets
-  create_service_account             = var.create_service_account
-  service_account_clusterwide_access = var.service_account_clusterwide_access
+  create_service_account             = var.runner_create_service_account
+  service_account_clusterwide_access = var.runner_service_account_clusterwide_access
 
   cache = {
     type   = var.cache_type
     path   = var.cache_path
     shared = var.cache_shared
-    gcs = {
-      CredentialsFile = local.cred_file
-      BucketName      = "${var.bucket_name}"
-    }
-    s3    = {}
-    azure = {}
+    gcs    = local.gcs
+    s3     = {}
+    azure  = {}
   }
 
   additional_secrets = var.additional_secrets
@@ -167,11 +177,11 @@ module "kubernetes_gitlab_runner" {
       enabled = var.enable_metrics_service
     }
     runner = {
-      protected = true
+      protected = var.runner_protected
     }
   }
 
   depends_on = [
-    kubernetes_secret.cache_secret
+    google_container_node_pool.gitlab_runner_pool
   ]
 }

@@ -95,7 +95,7 @@ Full contributing guidelines are covered [here](CONTRIBUTING.md).
 
 | Name | Source | Version |
 |------|--------|---------|
-| <a name="module_cache_gcs"></a> [cache\_gcs](#module\_cache\_gcs) | ./modules/cache | n/a |
+| <a name="module_cache_gcs"></a> [cache\_gcs](#module\_cache\_gcs) | ./cache | n/a |
 
 ## Resources
 

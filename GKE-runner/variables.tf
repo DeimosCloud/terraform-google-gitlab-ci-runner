@@ -4,7 +4,10 @@ variable "project" {
   type        = string
 }
 
-variable "region" {}
+variable "region" {
+  description = "where the resources should be deployed"
+  type        = string
+}
 
 variable "cluster_name" {
   description = "name of the cluster to deploy the kubernetes gitlab runner in"
@@ -16,36 +19,24 @@ variable "cluster_location" {
   type        = string
 }
 
-variable "auto_upgrade" {
-  description = "(Optional) Whether the nodes will be automatically upgraded."
-  type        = bool
-  default     = true
-}
-
-variable "kubernetes_version" {
-  type        = string
-  description = "The Kubernetes version for the nodes in this pool"
-  default     = null
-}
-
-variable "node_zones" {
+variable "runner_node_pool_zones" {
   type        = list(string)
   description = "The zones to host the cluster in (optional if regional cluster / required if zonal)"
   default     = null
 }
 
-variable "node_image_type" {
+variable "runner_node_pool_image_type" {
   type        = string
   description = "(optional) The type of image to be used"
   default     = "COS"
 }
 
-variable "disk_size_gb" {
+variable "runner_node_pool_disk_size_gb" {
   default     = 30
   description = "(Optional) Size of the disk attached to each node, specified in GB. The smallest allowed disk size is 10GB"
 }
 
-variable "disk_type" {
+variable "runner_node_pool_disk_type" {
   default     = "pd-standard"
   description = "(Optional) Type of the disk attached to each node (e.g. 'pd-standard', 'pd-balanced' or 'pd-ssd')."
 }
@@ -53,7 +44,7 @@ variable "disk_type" {
 variable "prefix" {
   description = "string to be prepended to the nodes service account id and the service account for the cache"
   type        = string
-  default     = "ci"
+  default     = "gitlab-runner"
 }
 
 variable "additional_node_service_account_roles" {
@@ -65,69 +56,58 @@ variable "additional_node_service_account_roles" {
 variable "runner_node_pool_name" {
   description = "name of the runner node pool"
   type        = string
+  default     = null
 }
 
 variable "initial_node_count" {
   description = "initial number of nodes that the node pool creates"
   type        = number
-  default     = 1
+  default     = 0
 }
 
-variable "min_node_count" {
+variable "runner_node_pool_min_node_count" {
   description = "the minimum number of nodes that can be present in the node pool (autoscaling controls)"
   type        = number
   default     = 0
 }
 
-variable "max_node_count" {
+variable "runner_node_pool_max_node_count" {
   description = "the maximum number of nodes that can be present in the node pool (autoscaling controls)"
   type        = number
   default     = 5
 }
 
-variable "max_surge" {
-  description = "maximum number of instances that cna be upgraded at a time"
-  type        = number
-  default     = 1
-}
-
-variable "max_unavailable" {
-  description = "maximum number of instances that can be taken offline during upgrade"
-  type        = number
-  default     = 0
-}
-
-variable "machine_type" {
+variable "runner_node_pool_machine_type" {
   description = "type of compute machine used for the nodes in the runner node pool"
   type        = string
   default     = "n1-standard-2"
 }
 
-variable "node_labels" {
+variable "runner_node_pool_node_labels" {
   description = "labels for nodes in the runner node pool"
   type        = map(any)
   default = {
-    "function" = "gitlab-runner"
+    "role" = "gitlab-runner"
   }
 }
 
-variable "node_taints" {
+variable "runner_node_pool_node_taints" {
   description = "taints to be applied to the nodes in the runner node pool"
   type        = list(map(string))
   default = [{
     effect = "NO_SCHEDULE"
-    key    = "function"
+    key    = "role"
     value  = "gitlab-ci"
   }]
 }
 
-variable "node_is_preemptible" {
-  default     = false
-  type        = bool
-  description = "A boolean that represents whether or not the underlying node VMs are preemptible"
-}
+# variable "node_is_preemptible" {
+#   default     = false
+#   type        = bool
+#   description = "A boolean that represents whether or not the underlying node VMs are preemptible"
+# }
 
-variable "oauth_scopes" {
+variable "runner_node_pool_oauth_scopes" {
   description = "(Optional) Scopes that are used by NAP when creating node pools."
   default     = ["https://www.googleapis.com/auth/cloud-platform"]
   type        = list(string)
@@ -136,13 +116,20 @@ variable "oauth_scopes" {
 variable "cache_location" {
   description = "location of the cache bucket"
   type        = string
-  default     = null
+  # default     = null
 }
 
 variable "cache_storage_class" {
   description = "The cache storage class"
   type        = string
   default     = "STANDARD"
+}
+variable "cache_labels" {
+  description = "The cache storage class"
+  type        = map(string)
+  default = {
+    "role" = "gitlab-runner-cache"
+  }
 }
 
 variable "cache_expiration_days" {
@@ -157,9 +144,10 @@ variable "cache_bucket_versioning" {
   default     = false
 }
 
-variable "release_name" {
+variable "runner_release_name" {
   description = "helm release name"
   type        = string
+  default     = null
 }
 
 variable "cache_path" {
@@ -171,6 +159,7 @@ variable "cache_path" {
 variable "cache_type" {
   description = "type of cache to use for runners"
   type        = string
+  default     = "gcs"
 }
 
 variable "cache_shared" {
@@ -179,21 +168,22 @@ variable "cache_shared" {
   default     = true
 }
 
-variable "create_service_account" {
+variable "runner_create_service_account" {
   description = "whether a service account should be created for the runner. if this is set to false then the var.serviceAccountname is used"
   type        = bool
   default     = true
 }
 
-variable "service_account_clusterwide_access" {
+variable "runner_service_account_clusterwide_access" {
   description = "whether the service account should be granted cluster wide access or access is restricted to the specified namespace"
   type        = bool
   default     = false
 }
 
-variable "bucket_name" {
+variable "cache_bucket_name" {
   description = "name of the gcs bucket to create, to be used as cache"
   type        = string
+  default     = null
 }
 
 variable "runner_registration_token" {
@@ -247,7 +237,7 @@ variable "manager_node_tolerations" {
   description = "tolerations to apply to the manager pod"
   default = [
     {
-      key      = "function"
+      key      = "role"
       operator = "Exists"
       effect   = "NoSchedule"
     }
@@ -263,14 +253,14 @@ variable "build_job_node_selectors" {
   description = "A map of node selectors to apply to the pods"
   type        = map(any)
   default = {
-    function = "gitlab-runner"
+    role = "gitlab-runner"
   }
 }
 
 variable "build_job_node_tolerations" {
   description = "A map of node tolerations to apply to the pods as defined https://docs.gitlab.com/runner/executors/kubernetes.html#other-configtoml-settings"
   default = {
-    "function=gitlab-ci" = "NoSchedule"
+    "role=gitlab-ci" = "NoSchedule"
   }
 }
 
@@ -324,7 +314,7 @@ variable "values_file" {
 variable "chart_version" {
   description = "version of the gitlab runner chart to use"
   type        = string
-  default     = "0.39.0"
+  default     = null
 }
 
 variable "image_pull_secrets" {
@@ -377,5 +367,10 @@ variable "runner_token" {
   description = "token of already registered runer. to use this var.runner_registration_token must be set to null"
   type        = string
   default     = null
+}
+variable "runner_protected" {
+  description = ""
+  type        = bool
+  default     = true
 }
 
