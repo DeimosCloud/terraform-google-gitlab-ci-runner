@@ -1,10 +1,14 @@
+resource "random_id" "suffix" {
+  byte_length = 4
+}
+
 
 #----------------------------
 # create GCS bucket for cache
 #-----------------------------
 
 resource "google_storage_bucket" "cache" {
-  name          = var.bucket_name
+  name          = local.bucket_name
   location      = var.bucket_location
   force_destroy = true
   storage_class = var.bucket_storage_class
@@ -30,12 +34,10 @@ resource "google_storage_bucket" "cache" {
 # create service account with access to the above created bucket
 #----------------------------------------------------------------
 
-resource "random_id" "suffix" {
-  byte_length = 4
-}
+
 
 resource "google_service_account" "cache_admin" {
-  account_id   = "${var.prefix}-cache-${random_id.suffix.hex}"
+  account_id   = local.id
   display_name = "GitLab CI Worker"
 }
 
