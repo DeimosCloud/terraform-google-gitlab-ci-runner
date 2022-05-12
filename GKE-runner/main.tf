@@ -30,7 +30,6 @@ resource "google_project_iam_member" "this" {
 #--------------------------------
 
 resource "random_id" "random_suffix" {
-  count       = var.runner_node_pool_name != null ? 1 : 0
   byte_length = 4
 }
 
@@ -64,7 +63,7 @@ resource "google_container_node_pool" "gitlab_runner_pool" {
 #-------------------------------------------------------
 resource "google_service_account" "cache_admin" {
   count        = var.cache_create_service_account == true ? 1 : 0
-  account_id   = local.id
+  account_id   = "${var.prefix}-cache-${random_id.random_suffix.hex}"
   display_name = "GitLab CI Worker"
 }
 
@@ -92,7 +91,7 @@ module "cache" {
 
 resource "google_service_account_key" "cache_admin" {
   count              = local.count
-  service_account_id = module.cache.0.cache_service_account_name
+  service_account_id = local.cache_service_account_name
 }
 
 
@@ -133,7 +132,7 @@ module "kubernetes_gitlab_runner" {
 
   release_name  = var.runner_release_name
   chart_version = var.chart_version
-  namespace     = var.namespace
+  namespace     = var.runner_namespace
 
   gitlab_url = var.gitlab_url
   concurrent = var.concurrent

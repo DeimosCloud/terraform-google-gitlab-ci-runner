@@ -1,7 +1,7 @@
-output "runner_name" {
-  value       = module.kubernetes_gitlab_runner.runner_name
-  description = "name of the gitlab runner"
-}
+# output "runner_name" {
+#   value       = module.kubernetes_gitlab_runner.runner_name
+#   description = "name of the gitlab runner"
+# }
 
 output "node_pool_name" {
   value       = google_container_node_pool.gitlab_runner_pool.name
@@ -9,7 +9,7 @@ output "node_pool_name" {
 }
 
 output "cache_bucket_name" {
-  value       = module.cache[0].bucket_name
+  value       = module.cache[0].cache_bucket_name
   description = "name of the gcs bucket used a s runner cache"
 }
 

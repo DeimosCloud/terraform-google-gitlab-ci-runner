@@ -83,7 +83,7 @@ To pass in custom values use `var.values_file` which specifies a path containing
 | <a name="input_cache_labels"></a> [cache\_labels](#input\_cache\_labels) | The cache storage class | `map(string)` | <pre>{<br>  "role": "gitlab-runner-cache"<br>}</pre> | no |
 | <a name="input_cache_location"></a> [cache\_location](#input\_cache\_location) | location of the cache bucket | `string` | n/a | yes |
 | <a name="input_cache_path"></a> [cache\_path](#input\_cache\_path) | path to append to the bucket url | `string` | `""` | no |
-| <a name="input_cache_service_account_email"></a> [cache\_service\_account\_email](#input\_cache\_service\_account\_email) | service account that should be granted access to the cache bucket. this is used if var.cache\_create\_service\_account is set to null | `string` | `null` | no |
+| <a name="input_cache_service_account"></a> [cache\_service\_account](#input\_cache\_service\_account) | service account that should be granted access to the cache bucket. this is used if var.cache\_create\_service\_account is set to null | `map(string)` | <pre>{<br>  "email": "",<br>  "name": ""<br>}</pre> | no |
 | <a name="input_cache_shared"></a> [cache\_shared](#input\_cache\_shared) | whether cache can be shared between runners | `bool` | `true` | no |
 | <a name="input_cache_storage_class"></a> [cache\_storage\_class](#input\_cache\_storage\_class) | The cache storage class | `string` | `"STANDARD"` | no |
 | <a name="input_cache_type"></a> [cache\_type](#input\_cache\_type) | type of cache to use for runners | `string` | `"gcs"` | no |
@@ -138,5 +138,4 @@ To pass in custom values use `var.values_file` which specifies a path containing
 | <a name="output_cache_bucket_name"></a> [cache\_bucket\_name](#output\_cache\_bucket\_name) | name of the gcs bucket used a s runner cache |
 | <a name="output_namespace"></a> [namespace](#output\_namespace) | namespace in which the runners were created |
 | <a name="output_node_pool_name"></a> [node\_pool\_name](#output\_node\_pool\_name) | name of the node pool where the runner pods are created |
-| <a name="output_runner_name"></a> [runner\_name](#output\_runner\_name) | name of the gitlab runner |
 <!-- END_TF_DOCS -->

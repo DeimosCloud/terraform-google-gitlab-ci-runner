@@ -126,10 +126,13 @@ variable "cache_create_service_account" {
   default     = true
 }
 
-variable "cache_service_account_email" {
+variable "cache_service_account" {
   description = "service account that should be granted access to the cache bucket. this is used if var.cache_create_service_account is set to null "
-  type        = string
-  default     = null
+  type        = map(string)
+  default = {
+    email = ""
+    name  = ""
+  }
 }
 
 variable "cache_storage_class" {

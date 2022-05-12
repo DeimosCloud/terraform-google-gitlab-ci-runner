@@ -17,5 +17,6 @@ locals {
     BucketName      = "${module.cache.0.cache_bucket_name}"
   }
   gcs                         = var.cache_type == "gcs" ? local.gcs_config : {}
-  cache_service_account_email = var.cache_create_service_account == true ? "${google_service_account.cache_admin}" : var.cache_service_account_email
+  cache_service_account_email = var.cache_create_service_account == true ? "${google_service_account.cache_admin[0].email}" : var.cache_service_account.email
+  cache_service_account_name  = var.cache_create_service_account == true ? "${google_service_account.cache_admin[0].name}" : var.cache_service_account.name
 }
