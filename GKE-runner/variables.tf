@@ -39,6 +39,7 @@ variable "runner_node_pool_disk_size_gb" {
 variable "runner_node_pool_disk_type" {
   default     = "pd-standard"
   description = "(Optional) Type of the disk attached to each node (e.g. 'pd-standard', 'pd-balanced' or 'pd-ssd')."
+  type        = string
 }
 
 variable "prefix" {
@@ -74,7 +75,7 @@ variable "runner_node_pool_min_node_count" {
 variable "runner_node_pool_max_node_count" {
   description = "the maximum number of nodes that can be present in the node pool (autoscaling controls)"
   type        = number
-  default     = 5
+  default     = 3
 }
 
 variable "runner_node_pool_machine_type" {
@@ -147,7 +148,7 @@ variable "cache_bucket_versioning" {
 variable "runner_release_name" {
   description = "helm release name"
   type        = string
-  default     = null
+  default     = "gitlab-runner"
 }
 
 variable "cache_path" {
@@ -180,11 +181,11 @@ variable "runner_service_account_clusterwide_access" {
   default     = false
 }
 
-variable "cache_bucket_name" {
-  description = "name of the gcs bucket to create, to be used as cache"
-  type        = string
-  default     = null
-}
+# variable "cache_bucket_name" {
+#   description = "name of the gcs bucket to create, to be used as cache"
+#   type        = string
+#   default     = null
+# }
 
 variable "runner_registration_token" {
   description = "runner registration token"

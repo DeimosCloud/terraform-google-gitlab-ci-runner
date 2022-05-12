@@ -61,7 +61,7 @@ To pass in custom values use `var.values_file` which specifies a path containing
 | [google_service_account_key.cache_admin](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/service_account_key) | resource |
 | [kubernetes_namespace.runner_namespace](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/namespace) | resource |
 | [kubernetes_secret.cache_secret](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/secret) | resource |
-| [random_id.node_pool_suffix](https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/id) | resource |
+| [random_id.random_suffix](https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/id) | resource |
 | [google_client_config.default](https://registry.terraform.io/providers/hashicorp/google/latest/docs/data-sources/client_config) | data source |
 | [google_container_cluster.this_cluster](https://registry.terraform.io/providers/hashicorp/google/latest/docs/data-sources/container_cluster) | data source |
 
@@ -76,7 +76,6 @@ To pass in custom values use `var.values_file` which specifies a path containing
 | <a name="input_build_job_node_tolerations"></a> [build\_job\_node\_tolerations](#input\_build\_job\_node\_tolerations) | A map of node tolerations to apply to the pods as defined https://docs.gitlab.com/runner/executors/kubernetes.html#other-configtoml-settings | `map` | <pre>{<br>  "role=gitlab-ci": "NoSchedule"<br>}</pre> | no |
 | <a name="input_build_job_run_container_as_user"></a> [build\_job\_run\_container\_as\_user](#input\_build\_job\_run\_container\_as\_user) | SecurityContext: runAsUser for all running job pods | `string` | `null` | no |
 | <a name="input_build_job_secret_volumes"></a> [build\_job\_secret\_volumes](#input\_build\_job\_secret\_volumes) | Secret volume configuration instructs Kubernetes to use a secret that is defined in Kubernetes cluster and mount it inside the runner pods as defined https://docs.gitlab.com/runner/executors/kubernetes.html#secret-volumes | <pre>object({<br>    name       = string<br>    mount_path = string<br>    read_only  = string<br>    items      = map(string)<br>  })</pre> | <pre>{<br>  "items": {},<br>  "mount_path": null,<br>  "name": null,<br>  "read_only": null<br>}</pre> | no |
-| <a name="input_cache_bucket_name"></a> [cache\_bucket\_name](#input\_cache\_bucket\_name) | name of the gcs bucket to create, to be used as cache | `string` | `null` | no |
 | <a name="input_cache_bucket_versioning"></a> [cache\_bucket\_versioning](#input\_cache\_bucket\_versioning) | Boolean used to enable versioning on the cache bucket, false by default. | `bool` | `false` | no |
 | <a name="input_cache_expiration_days"></a> [cache\_expiration\_days](#input\_cache\_expiration\_days) | Number of days before cache objects expires. | `number` | `2` | no |
 | <a name="input_cache_labels"></a> [cache\_labels](#input\_cache\_labels) | The cache storage class | `map(string)` | <pre>{<br>  "role": "gitlab-runner-cache"<br>}</pre> | no |
@@ -113,7 +112,7 @@ To pass in custom values use `var.values_file` which specifies a path containing
 | <a name="input_runner_node_pool_disk_type"></a> [runner\_node\_pool\_disk\_type](#input\_runner\_node\_pool\_disk\_type) | (Optional) Type of the disk attached to each node (e.g. 'pd-standard', 'pd-balanced' or 'pd-ssd'). | `string` | `"pd-standard"` | no |
 | <a name="input_runner_node_pool_image_type"></a> [runner\_node\_pool\_image\_type](#input\_runner\_node\_pool\_image\_type) | (optional) The type of image to be used | `string` | `"COS"` | no |
 | <a name="input_runner_node_pool_machine_type"></a> [runner\_node\_pool\_machine\_type](#input\_runner\_node\_pool\_machine\_type) | type of compute machine used for the nodes in the runner node pool | `string` | `"n1-standard-2"` | no |
-| <a name="input_runner_node_pool_max_node_count"></a> [runner\_node\_pool\_max\_node\_count](#input\_runner\_node\_pool\_max\_node\_count) | the maximum number of nodes that can be present in the node pool (autoscaling controls) | `number` | `5` | no |
+| <a name="input_runner_node_pool_max_node_count"></a> [runner\_node\_pool\_max\_node\_count](#input\_runner\_node\_pool\_max\_node\_count) | the maximum number of nodes that can be present in the node pool (autoscaling controls) | `number` | `3` | no |
 | <a name="input_runner_node_pool_min_node_count"></a> [runner\_node\_pool\_min\_node\_count](#input\_runner\_node\_pool\_min\_node\_count) | the minimum number of nodes that can be present in the node pool (autoscaling controls) | `number` | `0` | no |
 | <a name="input_runner_node_pool_name"></a> [runner\_node\_pool\_name](#input\_runner\_node\_pool\_name) | name of the runner node pool | `string` | `null` | no |
 | <a name="input_runner_node_pool_node_labels"></a> [runner\_node\_pool\_node\_labels](#input\_runner\_node\_pool\_node\_labels) | labels for nodes in the runner node pool | `map(any)` | <pre>{<br>  "role": "gitlab-runner"<br>}</pre> | no |
@@ -122,7 +121,7 @@ To pass in custom values use `var.values_file` which specifies a path containing
 | <a name="input_runner_node_pool_zones"></a> [runner\_node\_pool\_zones](#input\_runner\_node\_pool\_zones) | The zones to host the cluster in (optional if regional cluster / required if zonal) | `list(string)` | `null` | no |
 | <a name="input_runner_protected"></a> [runner\_protected](#input\_runner\_protected) | n/a | `bool` | `true` | no |
 | <a name="input_runner_registration_token"></a> [runner\_registration\_token](#input\_runner\_registration\_token) | runner registration token | `string` | n/a | yes |
-| <a name="input_runner_release_name"></a> [runner\_release\_name](#input\_runner\_release\_name) | helm release name | `string` | `null` | no |
+| <a name="input_runner_release_name"></a> [runner\_release\_name](#input\_runner\_release\_name) | helm release name | `string` | `"gitlab-runner"` | no |
 | <a name="input_runner_service_account_clusterwide_access"></a> [runner\_service\_account\_clusterwide\_access](#input\_runner\_service\_account\_clusterwide\_access) | whether the service account should be granted cluster wide access or access is restricted to the specified namespace | `bool` | `false` | no |
 | <a name="input_runner_tags"></a> [runner\_tags](#input\_runner\_tags) | comma separated list of tags to be applied to the runner | `string` | `null` | no |
 | <a name="input_runner_token"></a> [runner\_token](#input\_runner\_token) | token of already registered runer. to use this var.runner\_registration\_token must be set to null | `string` | `null` | no |
@@ -131,5 +130,10 @@ To pass in custom values use `var.values_file` which specifies a path containing
 
 ## Outputs
 
-No outputs.
+| Name | Description |
+|------|-------------|
+| <a name="output_cache_bucket_name"></a> [cache\_bucket\_name](#output\_cache\_bucket\_name) | name of the gcs bucket used a s runner cache |
+| <a name="output_namespace"></a> [namespace](#output\_namespace) | namespace in which the runners were created |
+| <a name="output_node_pool_name"></a> [node\_pool\_name](#output\_node\_pool\_name) | name of the node pool where the runner pods are created |
+| <a name="output_runner_name"></a> [runner\_name](#output\_runner\_name) | name of the gitlab runner |
 <!-- END_TF_DOCS -->

@@ -13,7 +13,7 @@ data "google_container_cluster" "this_cluster" {
 #--------------------------------------------------------------------
 
 resource "google_service_account" "runner_nodes" {
-  account_id   = "${var.prefix}-nodes-${random_id.node_pool_suffix.hex}"
+  account_id   = "${var.prefix}-nodes-${random_id.random_suffix.hex}"
   display_name = "GitLab CI Runner"
 }
 
@@ -28,7 +28,8 @@ resource "google_project_iam_member" "this" {
 # create runner node pool
 #--------------------------------
 
-resource "random_id" "node_pool_suffix" {
+resource "random_id" "random_suffix" {
+  count       = var.runner_node_pool_name != null ? 1 : 0
   byte_length = 4
 }
 
@@ -62,9 +63,9 @@ resource "google_container_node_pool" "gitlab_runner_pool" {
 #-----------------------------------------------------------
 
 module "cache" {
-  source                 = "../cache"
-  count                  = local.count
-  bucket_name            = local.cache_bucket_name
+  source = "../cache"
+  count  = local.count
+  # bucket_name            = local.cache_bucket_name
   bucket_location        = var.cache_location
   bucket_labels          = var.cache_labels
   bucket_storage_class   = var.cache_storage_class
@@ -119,7 +120,7 @@ module "kubernetes_gitlab_runner" {
   source  = "DeimosCloud/gitlab-runner/kubernetes"
   version = "~>1.3.0"
 
-  release_name  = local.release
+  release_name  = var.runner_release_name
   chart_version = var.chart_version
   namespace     = var.namespace
 
@@ -127,7 +128,7 @@ module "kubernetes_gitlab_runner" {
   concurrent = var.concurrent
   replicas   = var.replicas
 
-  runner_name               = local.runner_name
+  runner_name               = var.runner_name
   runner_token              = var.runner_token
   runner_tags               = var.runner_tags
   runner_registration_token = var.runner_registration_token
