@@ -120,6 +120,18 @@ variable "cache_location" {
   # default     = null
 }
 
+variable "cache_create_service_account" {
+  description = "whether to create service account for cache"
+  type        = bool
+  default     = true
+}
+
+variable "cache_service_account_email" {
+  description = "service account that should be granted access to the cache bucket. this is used if var.cache_create_service_account is set to null "
+  type        = string
+  default     = null
+}
+
 variable "cache_storage_class" {
   description = "The cache storage class"
   type        = string

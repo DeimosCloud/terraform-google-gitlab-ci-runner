@@ -22,13 +22,20 @@ resource "google_project_iam_member" "this" {
   member   = "serviceAccount:${google_service_account.runner.email}"
 }
 
+# Service account for Gitlab CI build instances that are dynamically spawned by the runner.
+resource "google_service_account" "agent" {
+  project      = var.project
+  account_id   = "${var.prefix}-gitlab-runner-agent"
+  display_name = "GitLab CI Worker"
+}
+
 resource "google_service_account_key" "agent" {
-  service_account_id = module.cache_gcs.0.cache_service_account_name
+  service_account_id = google_service_account.agent.name
 }
 
 # Allow GitLab CI runner to use the agent service account.
 resource "google_service_account_iam_member" "agent_runner" {
-  service_account_id = module.cache_gcs.0.cache_service_account_name
+  service_account_id = google_service_account.agent.name
   role               = "roles/iam.serviceAccountUser"
   member             = "serviceAccount:${google_service_account.runner.email}"
 }

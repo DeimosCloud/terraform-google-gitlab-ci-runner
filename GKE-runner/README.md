@@ -57,6 +57,7 @@ To pass in custom values use `var.values_file` which specifies a path containing
 |------|------|
 | [google_container_node_pool.gitlab_runner_pool](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/container_node_pool) | resource |
 | [google_project_iam_member.this](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/project_iam_member) | resource |
+| [google_service_account.cache_admin](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/service_account) | resource |
 | [google_service_account.runner_nodes](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/service_account) | resource |
 | [google_service_account_key.cache_admin](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/service_account_key) | resource |
 | [kubernetes_namespace.runner_namespace](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/namespace) | resource |
@@ -73,14 +74,16 @@ To pass in custom values use `var.values_file` which specifies a path containing
 | <a name="input_additional_secrets"></a> [additional\_secrets](#input\_additional\_secrets) | additional secrets to mount into the manager pods | `list(map(string))` | `[]` | no |
 | <a name="input_build_job_mount_docker_socket"></a> [build\_job\_mount\_docker\_socket](#input\_build\_job\_mount\_docker\_socket) | whether to enable docker build commands in CI jobs run on the runner. without running container in privileged mode | `bool` | `true` | no |
 | <a name="input_build_job_node_selectors"></a> [build\_job\_node\_selectors](#input\_build\_job\_node\_selectors) | A map of node selectors to apply to the pods | `map(any)` | <pre>{<br>  "role": "gitlab-runner"<br>}</pre> | no |
-| <a name="input_build_job_node_tolerations"></a> [build\_job\_node\_tolerations](#input\_build\_job\_node\_tolerations) | A map of node tolerations to apply to the pods as defined https://docs.gitlab.com/runner/executors/kubernetes.html#other-configtoml-settings | `map` | <pre>{<br>  "role=gitlab-ci": "NoSchedule"<br>}</pre> | no |
+| <a name="input_build_job_node_tolerations"></a> [build\_job\_node\_tolerations](#input\_build\_job\_node\_tolerations) | A map of node tolerations to apply to the pods as defined https://docs.gitlab.com/runner/executors/kubernetes.html#other-configtoml-settings | `map` | <pre>{<br>  "role=gitlab-runner": "NoSchedule"<br>}</pre> | no |
 | <a name="input_build_job_run_container_as_user"></a> [build\_job\_run\_container\_as\_user](#input\_build\_job\_run\_container\_as\_user) | SecurityContext: runAsUser for all running job pods | `string` | `null` | no |
 | <a name="input_build_job_secret_volumes"></a> [build\_job\_secret\_volumes](#input\_build\_job\_secret\_volumes) | Secret volume configuration instructs Kubernetes to use a secret that is defined in Kubernetes cluster and mount it inside the runner pods as defined https://docs.gitlab.com/runner/executors/kubernetes.html#secret-volumes | <pre>object({<br>    name       = string<br>    mount_path = string<br>    read_only  = string<br>    items      = map(string)<br>  })</pre> | <pre>{<br>  "items": {},<br>  "mount_path": null,<br>  "name": null,<br>  "read_only": null<br>}</pre> | no |
 | <a name="input_cache_bucket_versioning"></a> [cache\_bucket\_versioning](#input\_cache\_bucket\_versioning) | Boolean used to enable versioning on the cache bucket, false by default. | `bool` | `false` | no |
+| <a name="input_cache_create_service_account"></a> [cache\_create\_service\_account](#input\_cache\_create\_service\_account) | whether to create service account for cache | `bool` | `true` | no |
 | <a name="input_cache_expiration_days"></a> [cache\_expiration\_days](#input\_cache\_expiration\_days) | Number of days before cache objects expires. | `number` | `2` | no |
 | <a name="input_cache_labels"></a> [cache\_labels](#input\_cache\_labels) | The cache storage class | `map(string)` | <pre>{<br>  "role": "gitlab-runner-cache"<br>}</pre> | no |
 | <a name="input_cache_location"></a> [cache\_location](#input\_cache\_location) | location of the cache bucket | `string` | n/a | yes |
-| <a name="input_cache_path"></a> [cache\_path](#input\_cache\_path) | path to append to the bucket url | `string` | `"runner"` | no |
+| <a name="input_cache_path"></a> [cache\_path](#input\_cache\_path) | path to append to the bucket url | `string` | `""` | no |
+| <a name="input_cache_service_account_email"></a> [cache\_service\_account\_email](#input\_cache\_service\_account\_email) | service account that should be granted access to the cache bucket. this is used if var.cache\_create\_service\_account is set to null | `string` | `null` | no |
 | <a name="input_cache_shared"></a> [cache\_shared](#input\_cache\_shared) | whether cache can be shared between runners | `bool` | `true` | no |
 | <a name="input_cache_storage_class"></a> [cache\_storage\_class](#input\_cache\_storage\_class) | The cache storage class | `string` | `"STANDARD"` | no |
 | <a name="input_cache_type"></a> [cache\_type](#input\_cache\_type) | type of cache to use for runners | `string` | `"gcs"` | no |
@@ -98,7 +101,6 @@ To pass in custom values use `var.values_file` which specifies a path containing
 | <a name="input_manager_node_tolerations"></a> [manager\_node\_tolerations](#input\_manager\_node\_tolerations) | tolerations to apply to the manager pod | `list` | <pre>[<br>  {<br>    "effect": "NoSchedule",<br>    "key": "role",<br>    "operator": "Exists"<br>  }<br>]</pre> | no |
 | <a name="input_manager_pod_annotations"></a> [manager\_pod\_annotations](#input\_manager\_pod\_annotations) | A map of annotations to be added to each build pod created by the Runner. The value of these can include environment variables for expansion. Pod annotations can be overwritten in each build. | `map` | `{}` | no |
 | <a name="input_manager_pod_labels"></a> [manager\_pod\_labels](#input\_manager\_pod\_labels) | A map of labels to be added to each build pod created by the runner. The value of these can include environment variables for expansion. | `map` | `{}` | no |
-| <a name="input_namespace"></a> [namespace](#input\_namespace) | kubernetes namespace in which to create the runner | `string` | `"runner"` | no |
 | <a name="input_prefix"></a> [prefix](#input\_prefix) | string to be prepended to the nodes service account id and the service account for the cache | `string` | `"gitlab-runner"` | no |
 | <a name="input_project"></a> [project](#input\_project) | project in which to create iam binding for the cluster node service account | `string` | n/a | yes |
 | <a name="input_region"></a> [region](#input\_region) | where the resources should be deployed | `string` | n/a | yes |
@@ -108,6 +110,7 @@ To pass in custom values use `var.values_file` which specifies a path containing
 | <a name="input_runner_image"></a> [runner\_image](#input\_runner\_image) | the docker image to use for the runner | `string` | `"gitlab/gitlab-runner:alpine-bleeding"` | no |
 | <a name="input_runner_locked"></a> [runner\_locked](#input\_runner\_locked) | whether the runner is locked to a particular project or group | `bool` | `true` | no |
 | <a name="input_runner_name"></a> [runner\_name](#input\_runner\_name) | name of the runner | `string` | n/a | yes |
+| <a name="input_runner_namespace"></a> [runner\_namespace](#input\_runner\_namespace) | kubernetes namespace in which to create the runner | `string` | `"runner"` | no |
 | <a name="input_runner_node_pool_disk_size_gb"></a> [runner\_node\_pool\_disk\_size\_gb](#input\_runner\_node\_pool\_disk\_size\_gb) | (Optional) Size of the disk attached to each node, specified in GB. The smallest allowed disk size is 10GB | `number` | `30` | no |
 | <a name="input_runner_node_pool_disk_type"></a> [runner\_node\_pool\_disk\_type](#input\_runner\_node\_pool\_disk\_type) | (Optional) Type of the disk attached to each node (e.g. 'pd-standard', 'pd-balanced' or 'pd-ssd'). | `string` | `"pd-standard"` | no |
 | <a name="input_runner_node_pool_image_type"></a> [runner\_node\_pool\_image\_type](#input\_runner\_node\_pool\_image\_type) | (optional) The type of image to be used | `string` | `"COS"` | no |
@@ -116,7 +119,7 @@ To pass in custom values use `var.values_file` which specifies a path containing
 | <a name="input_runner_node_pool_min_node_count"></a> [runner\_node\_pool\_min\_node\_count](#input\_runner\_node\_pool\_min\_node\_count) | the minimum number of nodes that can be present in the node pool (autoscaling controls) | `number` | `0` | no |
 | <a name="input_runner_node_pool_name"></a> [runner\_node\_pool\_name](#input\_runner\_node\_pool\_name) | name of the runner node pool | `string` | `null` | no |
 | <a name="input_runner_node_pool_node_labels"></a> [runner\_node\_pool\_node\_labels](#input\_runner\_node\_pool\_node\_labels) | labels for nodes in the runner node pool | `map(any)` | <pre>{<br>  "role": "gitlab-runner"<br>}</pre> | no |
-| <a name="input_runner_node_pool_node_taints"></a> [runner\_node\_pool\_node\_taints](#input\_runner\_node\_pool\_node\_taints) | taints to be applied to the nodes in the runner node pool | `list(map(string))` | <pre>[<br>  {<br>    "effect": "NO_SCHEDULE",<br>    "key": "role",<br>    "value": "gitlab-ci"<br>  }<br>]</pre> | no |
+| <a name="input_runner_node_pool_node_taints"></a> [runner\_node\_pool\_node\_taints](#input\_runner\_node\_pool\_node\_taints) | taints to be applied to the nodes in the runner node pool | `list(map(string))` | <pre>[<br>  {<br>    "effect": "NO_SCHEDULE",<br>    "key": "role",<br>    "value": "gitlab-runner"<br>  }<br>]</pre> | no |
 | <a name="input_runner_node_pool_oauth_scopes"></a> [runner\_node\_pool\_oauth\_scopes](#input\_runner\_node\_pool\_oauth\_scopes) | (Optional) Scopes that are used by NAP when creating node pools. | `list(string)` | <pre>[<br>  "https://www.googleapis.com/auth/cloud-platform"<br>]</pre> | no |
 | <a name="input_runner_node_pool_zones"></a> [runner\_node\_pool\_zones](#input\_runner\_node\_pool\_zones) | The zones to host the cluster in (optional if regional cluster / required if zonal) | `list(string)` | `null` | no |
 | <a name="input_runner_protected"></a> [runner\_protected](#input\_runner\_protected) | n/a | `bool` | `true` | no |

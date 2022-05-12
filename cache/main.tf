@@ -31,18 +31,12 @@ resource "google_storage_bucket" "cache" {
 }
 
 #----------------------------------------------------------------
-# create service account with access to the above created bucket
+# Grant runner service account access to the above created bucket
 #----------------------------------------------------------------
-
-
-
-resource "google_service_account" "cache_admin" {
-  account_id   = local.id
-  display_name = "GitLab CI Worker"
-}
 
 resource "google_storage_bucket_iam_member" "cache-member" {
   bucket = google_storage_bucket.cache.name
   role   = "roles/storage.admin"
-  member = "serviceAccount:${google_service_account.cache_admin.email}"
+  member = "serviceAccount:${var.runner_service_account_email}"
+  # member = "serviceAccount:${google_service_account.cache_admin.email}"
 }

@@ -24,6 +24,7 @@ resource "google_project_iam_member" "this" {
   member   = "serviceAccount:${google_service_account.runner_nodes.email}"
 }
 
+
 #--------------------------------
 # create runner node pool
 #--------------------------------
@@ -58,6 +59,15 @@ resource "google_container_node_pool" "gitlab_runner_pool" {
 }
 
 
+#------------------------------------------------
+# create service account for cache
+#-------------------------------------------------------
+resource "google_service_account" "cache_admin" {
+  count        = var.cache_create_service_account == true ? 1 : 0
+  account_id   = local.id
+  display_name = "GitLab CI Worker"
+}
+
 #----------------------------------------------------------
 # create gcs bucket for distribute caching with the runners
 #-----------------------------------------------------------
@@ -66,12 +76,13 @@ module "cache" {
   source = "../cache"
   count  = local.count
   # bucket_name            = local.cache_bucket_name
-  bucket_location        = var.cache_location
-  bucket_labels          = var.cache_labels
-  bucket_storage_class   = var.cache_storage_class
-  bucket_versioning      = var.cache_bucket_versioning
-  bucket_expiration_days = var.cache_expiration_days
-  prefix                 = var.prefix
+  bucket_location              = var.cache_location
+  bucket_labels                = var.cache_labels
+  bucket_storage_class         = var.cache_storage_class
+  bucket_versioning            = var.cache_bucket_versioning
+  bucket_expiration_days       = var.cache_expiration_days
+  prefix                       = var.prefix
+  runner_service_account_email = local.cache_service_account_email
 }
 
 

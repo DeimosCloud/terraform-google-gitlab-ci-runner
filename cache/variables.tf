@@ -34,7 +34,12 @@ variable "bucket_labels" {
 }
 
 variable "prefix" {
-  description = "string to prepend to the cache service account id"
+  description = "string to prepend to the cache bucket"
   type        = string
   default     = "gitlab-runner"
+}
+
+variable "runner_service_account_email" {
+  description = "the email of the service account to access to the cache bucket "
+  type        = string
 }

@@ -16,5 +16,6 @@ locals {
     CredentialsFile = local.cred_file
     BucketName      = "${module.cache.0.cache_bucket_name}"
   }
-  gcs = var.cache_type == "gcs" ? local.gcs_config : {}
+  gcs                         = var.cache_type == "gcs" ? local.gcs_config : {}
+  cache_service_account_email = var.cache_create_service_account == true ? "${google_service_account.cache_admin}" : var.cache_service_account_email
 }
