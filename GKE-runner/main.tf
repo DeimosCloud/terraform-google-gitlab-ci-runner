@@ -87,7 +87,7 @@ resource "google_service_account_key" "cache_admin" {
 
 resource "kubernetes_namespace" "runner_namespace" {
   metadata {
-    name = var.namespace
+    name = var.runner_namespace
   }
 
   depends_on = [

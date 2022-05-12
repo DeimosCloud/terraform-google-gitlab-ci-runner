@@ -98,7 +98,7 @@ variable "runner_node_pool_node_taints" {
   default = [{
     effect = "NO_SCHEDULE"
     key    = "role"
-    value  = "gitlab-ci"
+    value  = "gitlab-runner"
   }]
 }
 
@@ -154,7 +154,7 @@ variable "runner_release_name" {
 variable "cache_path" {
   description = "path to append to the bucket url"
   type        = string
-  default     = "runner"
+  default     = ""
 }
 
 variable "cache_type" {
@@ -210,7 +210,7 @@ variable "unregister_runners" {
   default     = true
 }
 
-variable "namespace" {
+variable "runner_namespace" {
   description = "kubernetes namespace in which to create the runner"
   type        = string
   default     = "runner"
@@ -261,7 +261,7 @@ variable "build_job_node_selectors" {
 variable "build_job_node_tolerations" {
   description = "A map of node tolerations to apply to the pods as defined https://docs.gitlab.com/runner/executors/kubernetes.html#other-configtoml-settings"
   default = {
-    "role=gitlab-ci" = "NoSchedule"
+    "role=gitlab-runner" = "NoSchedule"
   }
 }
 

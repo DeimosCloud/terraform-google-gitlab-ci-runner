@@ -1,6 +1,6 @@
 # Terraform Google Cloud Storage Bucket For gitlab Runner Module
 
-Setup a GCS bucket as cache for gitlab-ci
+Setup a GCS bucket as cache for gitlab runner
 
 ## Usage
 ```
