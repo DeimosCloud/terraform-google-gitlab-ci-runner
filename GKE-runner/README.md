@@ -81,7 +81,7 @@ To pass in custom values use `var.values_file` which specifies a path containing
 | <a name="input_cache_create_service_account"></a> [cache\_create\_service\_account](#input\_cache\_create\_service\_account) | whether to create service account for cache | `bool` | `true` | no |
 | <a name="input_cache_expiration_days"></a> [cache\_expiration\_days](#input\_cache\_expiration\_days) | Number of days before cache objects expires. | `number` | `2` | no |
 | <a name="input_cache_labels"></a> [cache\_labels](#input\_cache\_labels) | The cache storage class | `map(string)` | <pre>{<br>  "role": "gitlab-runner-cache"<br>}</pre> | no |
-| <a name="input_cache_location"></a> [cache\_location](#input\_cache\_location) | location of the cache bucket | `string` | n/a | yes |
+| <a name="input_cache_location"></a> [cache\_location](#input\_cache\_location) | location of the cache bucket | `string` | `null` | no |
 | <a name="input_cache_path"></a> [cache\_path](#input\_cache\_path) | path to append to the bucket url | `string` | `""` | no |
 | <a name="input_cache_service_account"></a> [cache\_service\_account](#input\_cache\_service\_account) | service account that should be granted access to the cache bucket. this is used if var.cache\_create\_service\_account is set to null | `map(string)` | <pre>{<br>  "email": "",<br>  "name": ""<br>}</pre> | no |
 | <a name="input_cache_shared"></a> [cache\_shared](#input\_cache\_shared) | whether cache can be shared between runners | `bool` | `true` | no |

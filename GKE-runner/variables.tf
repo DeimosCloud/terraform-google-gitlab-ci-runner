@@ -117,7 +117,7 @@ variable "runner_node_pool_oauth_scopes" {
 variable "cache_location" {
   description = "location of the cache bucket"
   type        = string
-  # default     = null
+  default     = null
 }
 
 variable "cache_create_service_account" {

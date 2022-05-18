@@ -72,10 +72,8 @@ resource "google_service_account" "cache_admin" {
 #-----------------------------------------------------------
 
 module "cache" {
-  source = "../cache"
-  # count  = local.count
-  # bucket_name            = local.cache_bucket_name
-  bucket_location              = var.cache_location
+  source                       = "../cache"
+  bucket_location              = local.cache_location
   bucket_labels                = var.cache_labels
   bucket_storage_class         = var.cache_storage_class
   bucket_versioning            = var.cache_bucket_versioning
