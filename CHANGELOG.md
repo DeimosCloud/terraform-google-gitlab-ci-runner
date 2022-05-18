@@ -2,6 +2,32 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.1.0](https://github.com/DeimosCloud/terraform-google-gitlab-ci-runner/compare/v1.0.11...v1.1.0) (2022-05-18)
+
+
+### Features
+
+* Added module for cache and kubernetes ([#8](https://github.com/DeimosCloud/terraform-google-gitlab-ci-runner/issues/8)) ([0978d21](https://github.com/DeimosCloud/terraform-google-gitlab-ci-runner/commit/0978d215a28378b9f194fe29d9aaf44fb94d0567))
+
+
+### Bug Fixes
+
+* use the same image for spinning up dummy machine and update default runner machine image to COS ([7c24b17](https://github.com/DeimosCloud/terraform-google-gitlab-ci-runner/commit/7c24b17f8997d6558e917ee8f095422d29b5cc43))
+
+### [1.0.11](https://github.com/DeimosCloud/terraform-google-gitlab-ci-runner/compare/v1.0.10...v1.0.11) (2022-04-29)
+
+
+### Bug Fixes
+
+* update runner machine image to ubuntu-2004 to fix docker installation ([093ba99](https://github.com/DeimosCloud/terraform-google-gitlab-ci-runner/commit/093ba995d1a67d73be76e365a06a4b5c8d2b93d6))
+
+### [1.0.10](https://github.com/DeimosCloud/terraform-google-gitlab-ci-runner/compare/v1.0.9...v1.0.10) (2022-04-29)
+
+
+### Bug Fixes
+
+* use internal Ip for dummy runner so that firewall rule works ([f57a91f](https://github.com/DeimosCloud/terraform-google-gitlab-ci-runner/commit/f57a91fd66357ab7805db8efc142dad74cf72893))
+
 ### [1.0.9](https://github.com/DeimosCloud/terraform-google-gitlab-ci-runner/compare/v1.0.8...v1.0.9) (2022-04-05)
 
 
