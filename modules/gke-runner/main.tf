@@ -88,7 +88,6 @@ module "cache" {
 #--------------------------------------------------------
 
 resource "google_service_account_key" "cache_admin" {
-  # count              = local.count
   service_account_id = local.cache_service_account_name
 }
 
@@ -104,7 +103,6 @@ resource "kubernetes_namespace" "runner_namespace" {
 }
 
 resource "kubernetes_secret" "cache_secret" {
-  # count = local.count
   metadata {
     name      = local.cache_secret_name
     namespace = kubernetes_namespace.runner_namespace.metadata[0].name
