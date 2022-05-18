@@ -1,4 +1,5 @@
 resource "random_id" "suffix" {
+  count       = var.bucket_name == null ? 1 : 0
   byte_length = 4
 }
 
