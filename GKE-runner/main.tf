@@ -73,7 +73,7 @@ resource "google_service_account" "cache_admin" {
 
 module "cache" {
   source = "../cache"
-  count  = local.count
+  # count  = local.count
   # bucket_name            = local.cache_bucket_name
   bucket_location              = var.cache_location
   bucket_labels                = var.cache_labels
@@ -90,7 +90,7 @@ module "cache" {
 #--------------------------------------------------------
 
 resource "google_service_account_key" "cache_admin" {
-  count              = local.count
+  # count              = local.count
   service_account_id = local.cache_service_account_name
 }
 
@@ -106,14 +106,14 @@ resource "kubernetes_namespace" "runner_namespace" {
 }
 
 resource "kubernetes_secret" "cache_secret" {
-  count = local.count
+  # count = local.count
   metadata {
     name      = local.cache_secret_name
     namespace = kubernetes_namespace.runner_namespace.metadata[0].name
   }
 
   binary_data = {
-    gcs_cred = google_service_account_key.cache_admin[0].private_key
+    gcs_cred = google_service_account_key.cache_admin.private_key
   }
 
   depends_on = [
@@ -165,12 +165,15 @@ module "kubernetes_gitlab_runner" {
   service_account_clusterwide_access = var.runner_service_account_clusterwide_access
 
   cache = {
-    type   = var.cache_type
+    type   = local.cache_type
     path   = var.cache_path
     shared = var.cache_shared
-    gcs    = local.gcs
-    s3     = {}
-    azure  = {}
+    gcs = {
+      CredentialsFile = local.cred_file
+      BucketName      = "${module.cache.cache_bucket_name}"
+    }
+    s3    = {}
+    azure = {}
   }
 
   additional_secrets = var.additional_secrets

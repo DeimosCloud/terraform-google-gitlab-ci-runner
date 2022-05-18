@@ -7,16 +7,9 @@ locals {
     "roles/monitoring.viewer"
   ], var.additional_node_service_account_roles))
 
-  cred_file         = "/secrets/gcs_cred"
-  count             = var.cache_type == "gcs" ? 1 : 0
-  cache_secret_name = "google-application-credentials"
-
-
-  gcs_config = {
-    CredentialsFile = local.cred_file
-    BucketName      = "${module.cache.0.cache_bucket_name}"
-  }
-  gcs                         = var.cache_type == "gcs" ? local.gcs_config : {}
+  cred_file                   = "/secrets/gcs_cred"
+  cache_secret_name           = "google-application-credentials"
+  cache_type                  = "gcs"
   cache_service_account_email = var.cache_create_service_account == true ? "${google_service_account.cache_admin[0].email}" : var.cache_service_account.email
   cache_service_account_name  = var.cache_create_service_account == true ? "${google_service_account.cache_admin[0].name}" : var.cache_service_account.name
 }
