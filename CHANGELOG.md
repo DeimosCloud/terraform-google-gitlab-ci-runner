@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+### [1.1.2](https://github.com/DeimosCloud/terraform-google-gitlab-ci-runner/compare/v1.1.1...v1.1.2) (2022-05-18)
+
+
+### Bug Fixes
+
+* moved cache and gke-runner submodule into the folders directory ([#11](https://github.com/DeimosCloud/terraform-google-gitlab-ci-runner/issues/11)) ([8443244](https://github.com/DeimosCloud/terraform-google-gitlab-ci-runner/commit/8443244ec80264a63e583f36dc21e4b7ff8babbc))
+
 ### [1.1.1](https://github.com/DeimosCloud/terraform-google-gitlab-ci-runner/compare/v1.1.0...v1.1.1) (2022-05-18)
 
 
