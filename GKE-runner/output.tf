@@ -9,7 +9,7 @@ output "node_pool_name" {
 }
 
 output "cache_bucket_name" {
-  value       = module.cache[0].cache_bucket_name
+  value       = module.cache.cache_bucket_name
   description = "name of the gcs bucket used a s runner cache"
 }
 
