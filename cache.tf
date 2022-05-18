@@ -1,5 +1,5 @@
 module "cache_gcs" {
-  source                       = "./cache"
+  source                       = "./modules/cache"
   count                        = var.create_cache_bucket ? 1 : 0
   bucket_name                  = local.bucket_name
   bucket_location              = var.cache_location != null ? var.cache_location : var.region
