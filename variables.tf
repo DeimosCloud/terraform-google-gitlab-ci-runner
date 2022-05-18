@@ -79,10 +79,10 @@ variable "docker_machine_preemptible" {
   default     = false
 }
 
-variable "docker_machine_image" {
-  description = "A GCP custom image to use for spinning up docker-machines"
+variable "runner_machine_image" {
+  description = "A GCP custom image to use for spinning up runners when using docker-machine"
   type        = string
-  default     = ""
+  default     = "cos-cloud/global/images/family/cos-97-lts"
 }
 
 variable "docker_machine_disk_type" {
