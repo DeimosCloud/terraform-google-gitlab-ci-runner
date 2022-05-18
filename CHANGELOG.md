@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+### [1.1.1](https://github.com/DeimosCloud/terraform-google-gitlab-ci-runner/compare/v1.1.0...v1.1.1) (2022-05-18)
+
+
+### Bug Fixes
+
+* changed module.cache[0].cache_bucket_name -> module.cache.cache_bucket_name  ([#10](https://github.com/DeimosCloud/terraform-google-gitlab-ci-runner/issues/10)) ([0d1fa07](https://github.com/DeimosCloud/terraform-google-gitlab-ci-runner/commit/0d1fa07fe415ba3c587eb4f654a24a9e1f2461cb))
+
 ## [1.1.0](https://github.com/DeimosCloud/terraform-google-gitlab-ci-runner/compare/v1.0.11...v1.1.0) (2022-05-18)
 
 
