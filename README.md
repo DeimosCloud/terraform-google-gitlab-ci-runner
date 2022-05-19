@@ -7,7 +7,7 @@ The runners created by the module use preemptible instances by default for runni
 - Shared cache in GCS with life cycle management to clear objects after x days.
 - Runner agents registered automatically.
 
-The runner supports 2 main scenarios:
+The runner supports:
 
 ### GitLab CI docker-machine runner 
 

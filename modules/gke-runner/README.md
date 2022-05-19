@@ -1,4 +1,4 @@
-# Terraform Kubernetes Gitlab-Runner On GKE Module
+# Gitlab-Runner On GKE
 
 Setup Gitlab Runner on a GKE cluster using terraform. The runner is installed via the [Deimos kubernetes gitlab runner module](https://registry.terraform.io/modules/DeimosCloud/gitlab-runner/kubernetes/latest)
 
