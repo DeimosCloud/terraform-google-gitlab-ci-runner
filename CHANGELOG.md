@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.2.0](https://github.com/DeimosCloud/terraform-google-gitlab-ci-runner/compare/v1.1.2...v1.2.0) (2022-05-19)
+
+
+### Features
+
+* Conditionally create node pool ([#12](https://github.com/DeimosCloud/terraform-google-gitlab-ci-runner/issues/12)) ([2b8b64d](https://github.com/DeimosCloud/terraform-google-gitlab-ci-runner/commit/2b8b64d073eb71540fb8ce2d92c4f62ff2e4c873))
+
 ### [1.1.2](https://github.com/DeimosCloud/terraform-google-gitlab-ci-runner/compare/v1.1.1...v1.1.2) (2022-05-18)
 
 
