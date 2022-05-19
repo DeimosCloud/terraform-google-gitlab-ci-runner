@@ -1,7 +1,7 @@
-# output "runner_name" {
-#   value       = module.kubernetes_gitlab_runner.runner_name
-#   description = "name of the gitlab runner"
-# }
+output "runner_name" {
+  value       = var.runner_name
+  description = "name of the gitlab runner"
+}
 
 output "node_pool_name" {
   value       = var.create_node_pool ? google_container_node_pool.this.0.name : var.runner_node_pool_name

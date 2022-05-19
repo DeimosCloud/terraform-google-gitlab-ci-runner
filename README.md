@@ -87,14 +87,15 @@ Full contributing guidelines are covered [here](CONTRIBUTING.md).
 
 | Name | Version |
 |------|---------|
-| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 0.14 |
+| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 0.13 |
+| <a name="requirement_google"></a> [google](#requirement\_google) | >= 3.40 |
 
 ## Providers
 
 | Name | Version |
 |------|---------|
-| <a name="provider_google"></a> [google](#provider\_google) | 4.19.0 |
-| <a name="provider_random"></a> [random](#provider\_random) | 3.1.3 |
+| <a name="provider_google"></a> [google](#provider\_google) | 4.21.0 |
+| <a name="provider_random"></a> [random](#provider\_random) | 3.2.0 |
 
 ## Modules
 
@@ -138,7 +139,6 @@ Full contributing guidelines are covered [here](CONTRIBUTING.md).
 | <a name="input_docker_machine_disk_size"></a> [docker\_machine\_disk\_size](#input\_docker\_machine\_disk\_size) | The disk size for the docker-machine instances. | `number` | `20` | no |
 | <a name="input_docker_machine_disk_type"></a> [docker\_machine\_disk\_type](#input\_docker\_machine\_disk\_type) | The disk Type for docker-machine instances. | `string` | `"pd-standard"` | no |
 | <a name="input_docker_machine_download_url"></a> [docker\_machine\_download\_url](#input\_docker\_machine\_download\_url) | Full url pointing to a linux x64 distribution of docker machine. | `string` | `"https://gitlab-docker-machine-downloads.s3.amazonaws.com/main/docker-machine-Linux-x86_64"` | no |
-| <a name="input_docker_machine_image"></a> [docker\_machine\_image](#input\_docker\_machine\_image) | A GCP custom image to use for spinning up docker-machines | `string` | `""` | no |
 | <a name="input_docker_machine_machine_type"></a> [docker\_machine\_machine\_type](#input\_docker\_machine\_machine\_type) | The Machine Type for the docker-machine instances. | `string` | `"f1-micro"` | no |
 | <a name="input_docker_machine_options"></a> [docker\_machine\_options](#input\_docker\_machine\_options) | List of additional options for the docker machine config. Each element of this list must be a key=value pair. E.g. '["google-zone=a"]' | `list(string)` | `[]` | no |
 | <a name="input_docker_machine_preemptible"></a> [docker\_machine\_preemptible](#input\_docker\_machine\_preemptible) | If true, docker-machine instances will be premptible | `bool` | `false` | no |
@@ -152,6 +152,7 @@ Full contributing guidelines are covered [here](CONTRIBUTING.md).
 | <a name="input_project"></a> [project](#input\_project) | The GCP project to deploy the runner into. | `string` | n/a | yes |
 | <a name="input_region"></a> [region](#input\_region) | The GCP region to deploy the runner into. | `string` | n/a | yes |
 | <a name="input_runner_additional_service_account_roles"></a> [runner\_additional\_service\_account\_roles](#input\_runner\_additional\_service\_account\_roles) | Additional roles to pass to the Runner service account | `list(string)` | `[]` | no |
+| <a name="input_runner_machine_image"></a> [runner\_machine\_image](#input\_runner\_machine\_image) | A GCP custom image to use for spinning up runners when using docker-machine | `string` | `"cos-cloud/global/images/family/cos-97-lts"` | no |
 | <a name="input_runners_additional_volumes"></a> [runners\_additional\_volumes](#input\_runners\_additional\_volumes) | Additional volumes that will be used in the runner config.toml, e.g Docker socket | `list(any)` | `[]` | no |
 | <a name="input_runners_allow_ssh_access"></a> [runners\_allow\_ssh\_access](#input\_runners\_allow\_ssh\_access) | Enables SSH Access to the runner instances. | `bool` | `true` | no |
 | <a name="input_runners_concurrent"></a> [runners\_concurrent](#input\_runners\_concurrent) | Concurrent value for the runners, will be used in the runner config.toml. Limits how many jobs globally can be run concurrently when running docker-machine. | `number` | `10` | no |
@@ -199,5 +200,8 @@ Full contributing guidelines are covered [here](CONTRIBUTING.md).
 
 ## Outputs
 
-No outputs.
+| Name | Description |
+|------|-------------|
+| <a name="output_cache_bucket_name"></a> [cache\_bucket\_name](#output\_cache\_bucket\_name) | name of the gcs bucket used a s runner cache |
+| <a name="output_runners_name"></a> [runners\_name](#output\_runners\_name) | name of the gitlab runner |
 <!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
