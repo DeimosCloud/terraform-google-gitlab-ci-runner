@@ -150,6 +150,8 @@ module "kubernetes_gitlab_runner" {
   build_job_secret_volumes        = var.build_job_secret_volumes
   build_job_mount_docker_socket   = var.build_job_mount_docker_socket
   build_job_run_container_as_user = var.build_job_run_container_as_user
+  build_job_requests              = var.build_job_requests
+  build_job_limits                = var.build_job_limits
 
   docker_fs_group = var.docker_fs_group
 
