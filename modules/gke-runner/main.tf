@@ -33,11 +33,12 @@ resource "random_id" "random_suffix" {
   byte_length = 4
 }
 
-resource "google_container_node_pool" "gitlab_runner_pool" {
+resource "google_container_node_pool" "this" {
+  count              = var.create_node_pool ? 1 : 0
   name               = local.node_pool_name
   cluster            = data.google_container_cluster.this_cluster.id
   initial_node_count = var.initial_node_count
-  node_locations     = var.runner_node_pool_zones
+  node_locations     = var.runner_node_locations
 
   autoscaling {
     min_node_count = var.runner_node_pool_min_node_count
@@ -96,10 +97,6 @@ resource "kubernetes_namespace" "runner_namespace" {
   metadata {
     name = var.runner_namespace
   }
-
-  depends_on = [
-    google_container_node_pool.gitlab_runner_pool
-  ]
 }
 
 resource "kubernetes_secret" "cache_secret" {
@@ -113,7 +110,7 @@ resource "kubernetes_secret" "cache_secret" {
   }
 
   depends_on = [
-    google_container_node_pool.gitlab_runner_pool,
+    google_container_node_pool.this,
     kubernetes_namespace.runner_namespace
   ]
 }
@@ -124,7 +121,7 @@ resource "kubernetes_secret" "cache_secret" {
 #-----------------------------------------------------------------------
 module "kubernetes_gitlab_runner" {
   source  = "DeimosCloud/gitlab-runner/kubernetes"
-  version = "~>1.3.0"
+  version = "~>1.4.0"
 
   release_name  = var.runner_release_name
   chart_version = var.chart_version
@@ -143,7 +140,7 @@ module "kubernetes_gitlab_runner" {
   run_untagged_jobs         = var.run_untagged_jobs
   unregister_runners        = var.unregister_runners
 
-  manager_node_selectors   = var.runner_node_pool_node_labels
+  manager_node_selectors   = var.manager_node_selectors
   manager_node_tolerations = var.manager_node_tolerations
   manager_pod_annotations  = var.manager_pod_annotations
   manager_pod_labels       = var.manager_pod_labels
@@ -153,6 +150,8 @@ module "kubernetes_gitlab_runner" {
   build_job_secret_volumes        = var.build_job_secret_volumes
   build_job_mount_docker_socket   = var.build_job_mount_docker_socket
   build_job_run_container_as_user = var.build_job_run_container_as_user
+  build_job_requests              = var.build_job_requests
+  build_job_limits                = var.build_job_limits
 
   docker_fs_group = var.docker_fs_group
 
@@ -190,8 +189,4 @@ module "kubernetes_gitlab_runner" {
       protected = var.runner_protected
     }
   }
-
-  depends_on = [
-    google_container_node_pool.gitlab_runner_pool
-  ]
 }

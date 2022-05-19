@@ -7,7 +7,7 @@ The runners created by the module use preemptible instances by default for runni
 - Shared cache in GCS with life cycle management to clear objects after x days.
 - Runner agents registered automatically.
 
-The runner supports 2 main scenarios:
+The runner supports:
 
 ### GitLab CI docker-machine runner 
 
@@ -16,6 +16,11 @@ In this scenario the runner agent is running on a GCP Compute Instance and runne
 ### GitLab CI docker runner
 
 In this scenario _not_ docker machine is used but docker to schedule the builds. Builds will run on the same compute instance as the agent. 
+
+### GitLab CI Kubernetes Runner
+
+See [gke-runner](./modules/gke-runner)
+
 
 ## Autoscaling the Runners
 Both docker-machine runner and docker runners autoscale using GCP Custom metrics. The runner publishes running jobs metrics to stackdriver which is then used to scale up/down the number of active runners. `var.runners_min_replicas` and `var.runners_max_replicas` defined variables for the minimum and maximum number of runners respectively. It uses Google Managed Instance Group Autoscaler to scale when the average of running jobs exceeds `var.runners_concurrent`. 
@@ -50,10 +55,10 @@ By default the module creates a a cache for the runner in Google Cloud Storage. 
 module "runner" {
   source  = "DeimosCloud/gitlab-ci-runner/google"
 
-  network = "default"
+  network    = "default"
   subnetwork = "someNetwork"
-  region  = "europe-west1"
-  project = local.project_id
+  region     = "europe-west1"
+  project    = local.project_id
 
   runners_name       = "docker-default"
   runners_gitlab_url = "https://gitlab.com"

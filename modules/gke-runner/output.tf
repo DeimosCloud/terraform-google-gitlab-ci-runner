@@ -4,7 +4,7 @@
 # }
 
 output "node_pool_name" {
-  value       = google_container_node_pool.gitlab_runner_pool.name
+  value       = var.create_node_pool ? google_container_node_pool.this.0.name : var.runner_node_pool_name
   description = "name of the node pool where the runner pods are created"
 }
 
