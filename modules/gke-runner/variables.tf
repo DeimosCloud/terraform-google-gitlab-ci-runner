@@ -1,4 +1,3 @@
-
 variable "project" {
   description = "project in which to create iam binding for the cluster node service account"
   type        = string
@@ -19,9 +18,14 @@ variable "cluster_location" {
   type        = string
 }
 
-variable "runner_node_pool_zones" {
+variable "create_node_pool" {
+  description = "if true, a node pool for running the jobs will be created"
+  default     = true
+}
+
+variable "runner_node_locations" {
   type        = list(string)
-  description = "The zones to host the cluster in (optional if regional cluster / required if zonal)"
+  description = "The list of zones in which the node pool's nodes should be located. Nodes must be in the region of their regional cluster or in the same region as their cluster's zone for zonal clusters. If unspecified, the cluster-level node_locations will be used"
   default     = null
 }
 
@@ -228,7 +232,7 @@ variable "unregister_runners" {
 variable "runner_namespace" {
   description = "kubernetes namespace in which to create the runner"
   type        = string
-  default     = "runner"
+  default     = "gitlab-runner"
 }
 
 variable "gitlab_url" {
@@ -251,13 +255,12 @@ variable "runner_locked" {
 
 variable "manager_node_tolerations" {
   description = "tolerations to apply to the manager pod"
-  default = [
-    {
-      key      = "role"
-      operator = "Exists"
-      effect   = "NoSchedule"
-    }
-  ]
+  default     = []
+}
+
+variable "manager_node_selectors" {
+  description = "A map of node selectors to apply to the pods"
+  default     = {}
 }
 
 variable "runner_name" {
@@ -358,7 +361,7 @@ variable "build_job_secret_volumes" {
 
 variable "build_job_mount_docker_socket" {
   default     = true
-  description = "whether to enable docker build commands in CI jobs run on the runner. without running container in privileged mode"
+  description = "Whether to enable docker build commands in CI jobs run on the runner. without running container in privileged mode"
   type        = bool
 }
 
@@ -376,7 +379,7 @@ variable "build_job_run_container_as_user" {
 
 variable "run_untagged_jobs" {
   description = "Specify if jobs without tags should be run. https://docs.gitlab.com/ce/ci/runners/#runner-is-allowed-to-run-untagged-jobs"
-  default     = true
+  default     = false
 }
 
 variable "runner_token" {
@@ -384,9 +387,34 @@ variable "runner_token" {
   type        = string
   default     = null
 }
+
 variable "runner_protected" {
   description = ""
   type        = bool
-  default     = true
+  default     = false
+}
+
+variable "build_job_limits" {
+  description = "The CPU and memory limits for job containers"
+  type = object({
+    cpu    = string
+    memory = string
+  })
+  default = {
+    cpu    = "2"
+    memory = "1Gi"
+  }
+}
+
+variable "build_job_requests" {
+  description = "The CPU and memory requests for job containers"
+  type = object({
+    cpu    = string
+    memory = string
+  })
+  default = {
+    cpu    = "1"
+    memory = "512Mi"
+  }
 }
 

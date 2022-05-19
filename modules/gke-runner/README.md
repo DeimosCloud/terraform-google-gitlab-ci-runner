@@ -1,23 +1,20 @@
 # Terraform Kubernetes Gitlab-Runner On GKE Module
+
 Setup Gitlab Runner on a GKE cluster using terraform. The runner is installed via the [Deimos kubernetes gitlab runner module](https://registry.terraform.io/modules/DeimosCloud/gitlab-runner/kubernetes/latest)
 
-Ensure Kubernetes Provider and Helm Provider settings are correct
-https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/guides/getting-started#provider-setup
+Ensure Kubernetes Provider and Helm Provider are configured properly https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/guides/getting-started#provider-setup
 
 ## Usage
 ```hcl
-
 module "runner" {
-    source                    = "DeimosCloud/gitlab-ci-runner/google"
-
-    project                   = var.project_id
-    cluster_name              = var.cluster_name
-    cluster_location          = var.cluster_location
+    source            = "DeimosCloud/gitlab-ci-runner/google//modules/gke-runner"
+    project           = var.project_id
+    region            = var.region
+    cluster_name      = var.cluster_name
+    cluster_location  = var.cluster_location
     
     runner_registration_token = var.runner_registration_token
     runner_tags               = var.runner_tags
-
-    cache_location            = var.region
 }
 ```
 
