@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+### [1.2.1](https://github.com/DeimosCloud/terraform-google-gitlab-ci-runner/compare/v1.2.0...v1.2.1) (2022-06-12)
+
+
+### Bug Fixes
+
+* fix cache name and optional docker-machine firewall creation ([#13](https://github.com/DeimosCloud/terraform-google-gitlab-ci-runner/issues/13)) ([1d53300](https://github.com/DeimosCloud/terraform-google-gitlab-ci-runner/commit/1d5330027c504ed2c5c0401387551f65acc3de77))
+
 ## [1.2.0](https://github.com/DeimosCloud/terraform-google-gitlab-ci-runner/compare/v1.1.2...v1.2.0) (2022-05-19)
 
 
