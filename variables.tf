@@ -412,3 +412,8 @@ variable "runner_additional_service_account_roles" {
   default     = []
   type        = list(string)
 }
+
+variable "create_docker_machines_firewall" {
+  description = "Whether to create the docker-machines firewall. This is required for the runner to work. If deploying multiple runners in the same project, you can set this to false for one of the runners"
+  default     = true
+}

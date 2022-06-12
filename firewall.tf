@@ -14,6 +14,7 @@ resource "google_compute_firewall" "ssh" {
 }
 
 resource "google_compute_firewall" "docker_machine" {
+  count       = var.create_docker_machines_firewall ? 1 : 0
   name        = "docker-machines"
   description = "Allow docker-machine traffic within on port 2376"
   network     = data.google_compute_network.this.name
