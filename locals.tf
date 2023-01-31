@@ -6,7 +6,7 @@ locals {
   firewall_tag = "${var.prefix}-gitlab-runner"
 
   // Convert list to a string separated by a comma
-  docker_machine_options_string = join(",", var.docker_machine_options)
+  docker_machine_options_string = join(",", formatlist("%q", var.docker_machine_options))
 
   runners_machine_autoscaling = templatefile("${path.module}/templates/runners-machine-autoscaling.tpl", {
     runners_machine_autoscaling = var.runners_machine_autoscaling
