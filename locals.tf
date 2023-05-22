@@ -5,11 +5,8 @@ locals {
   bucket_name  = "${var.prefix}-gitlab-runner-cache-${random_id.this.hex}"
   firewall_tag = "${var.prefix}-gitlab-runner"
 
-  // Convert list to a string separated and prepend by a comma
-  docker_machine_options_string = format(
-    ",%s",
-    join(",", formatlist("%q", var.docker_machine_options)),
-  )
+  // Convert list to a string separated by a comma
+  docker_machine_options_string = join(",", formatlist("%q", var.docker_machine_options))
 
   runners_machine_autoscaling = templatefile("${path.module}/templates/runners-machine-autoscaling.tpl", {
     runners_machine_autoscaling = var.runners_machine_autoscaling

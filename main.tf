@@ -13,6 +13,9 @@ locals {
     "roles/compute.securityAdmin",
     "roles/monitoring.metricWriter"
   ], var.runner_additional_service_account_roles))
+  agent_iam_roles = [
+    "roles/iam.serviceAccountTokenCreator"
+  ]
 }
 
 resource "google_project_iam_member" "this" {
@@ -27,6 +30,13 @@ resource "google_service_account" "agent" {
   project      = var.project
   account_id   = "${var.prefix}-gitlab-runner-agent"
   display_name = "GitLab CI Worker"
+}
+
+resource "google_project_iam_member" "agent" {
+  for_each = toset(local.agent_iam_roles)
+  project  = var.project
+  role     = each.value
+  member   = "serviceAccount:${google_service_account.agent.email}"
 }
 
 resource "google_service_account_key" "agent" {
